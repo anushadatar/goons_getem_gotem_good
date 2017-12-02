@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>NewsBlind- Fake News Classifier</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Barlow+Semi+Condensed" rel="stylesheet"> 
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="js/script_face.js"></script>
+
+    <style>
+      body {
+        padding-top: 54px;
+      }
+      @media (min-width: 992px) {
+        body {
+          padding-top: 56px;
+        }
+      }
+
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="#">NewsBlind</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Search
+                <span class="sr-only">(current)</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Methodology</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">About Us</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+      <div class="row">
+        
+        <div id="entry_main" class="col-lg-12 text-center">
+          <br> <br>
+          <p class="lead">To start, enter a URL to analyze</p>          
+          <div class="box">
+            <div class="container-1">
+                <span class="icon"><i class="fa fa-search"></i></span>
+                <input type="search" id="search" placeholder="Search..." />
+            </div>
+          <br>
+          <hr>
+          <ul class="list-unstyled">
+            <li>Bootstrap 4.0.0-beta</li>
+            <li>jQuery 3.2.1</li>
+          </ul>
+        </div>
+      </div>
+
+      <div id="loading_main" class="col-lg-12 text-center" style="display:none;">
+          <br> <br>
+          <p class="lead">Fetching results...</p>          
+          <div class="box">
+            <div class="container-1">
+                <div class = "qua" style="text-align:center;align-items: center;">
+                <div class="loader">
+                  <div id="largeBox"></div>
+                  <div id="smallBox"></div>
+                </div>
+              </div>
+            </div>
+          <br>
+          <br>
+          <hr>
+          <ul class="list-unstyled">
+            <li>Bootstrap 4.0.0-beta</li>
+            <li>jQuery 3.2.1</li>
+          </ul>
+        </div>
+      </div>
+
+      <div id="status_main" class="col-lg-12 text-center" style="display:none;">
+          <br> <br>
+          <h4 id="status" class="unknown">RELIABLE</h4>          
+          <div class="box">
+
+          <hr>
+          <ul class="list-unstyled">
+            <li>Bootstrap 4.0.0-beta</li>
+            <li>jQuery 3.2.1</li>
+          </ul>
+        </div>
+      </div>
+
+
+
+
+
+    </div>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  </body>
+
+</html>

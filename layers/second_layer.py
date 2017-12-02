@@ -7,12 +7,13 @@ from sumy.summarizers.lsa import LsaSummarizer as Summarizer
 from sumy.nlp.stemmers import Stemmer
 from sumy.utils import get_stop_words
 
-# Commenting out things we are not currently using.
 #from google import google
+#import goolge
+
 
 from textblob import TextBlob
 from textblob.classifiers import NaiveBayesClassifier
-import grammar_check
+#import grammar_check
 
 #from newspaper import Article
 #import newspaper
@@ -26,7 +27,26 @@ import urllib
 import wikipedia
 import json
 
-class SecondLayer():
+
+
+
+
+# TODO List
+# Fix clickbait analyzer
+# Give that a lot more training data`
+# Impletment pandas series to plain text conversion
+# Worry about python 2 and 3 library conflicts
+# Think about how to hand data over the UI
+# Build the entire UI and also the web framework (oh yeah, that)
+# Implement alternate article lookup
+
+# TODO Figure out how this compiles into JS for the extensions
+# TODO Figure out how to best hand this over to the UI
+# TODO Add
+# TODO Add text summarization feature
+    # Then, add suggestions feature
+
+class second_layer():
     """
     A news article. Should ideally have raw text input.
     """
@@ -40,16 +60,16 @@ class SecondLayer():
         self.polarity = self.text.sentiment[0]
         self.subjectivity = self.text.sentiment[1]
         self.sentiment_metric = self.compute_sentiment_metric()
-        self.grammar_metric = self.compute_grammar_metric()
-
-        #  self.crossCheck = self.crossCheck()
-        self.title_metric = self.compute_clickbait_metric()
-        self.title_metric = self.compute_clickbait_metric()
-        # self.author_info = self.find_author()
+        #self.grammar_metric = self.compute_grammar_metric()
+        #self.title_metric = self.compute_clickbait_metric()
+        self.grammar_metric = 0
+        self.title_metric = 0
+        #self.author_info = self.find_author()
+        self.author_info = 0
         self.websites, self.category = self.parse_suspicious_websites()
         self.TLD_score = self.check_TLD()
         self.domain_score = self.check_domain()
-        # self.author_score = self. check_author()
+        #self.author_score = self. check_author()
         self.total_score = self.compute_total_score()
 
     def compute_sentiment_metric(self):
@@ -58,7 +78,7 @@ class SecondLayer():
         the overall polairty (positive/negative bias) or
         """
         return (((2 * abs(self.polarity) - 1) + (2 * self.subjectivity) - 1) / 2) * 10
-
+    '''
     def compute_grammar_metric(self):
         """
         Computes grammar metric for text set.
@@ -68,36 +88,24 @@ class SecondLayer():
         approximate_number_of_words = self.raw_text.count(" ") + 1
         metric =((approximate_number_of_words- len(matches))/float(approximate_number_of_words))
         return (((2 * metric) - 1) * 10)
-
+    '''
+    '''
     def compute_clickbait_metric(self):
         """
         Computes clickbaityness metric for text set.
         """
         train = [
             ("Whoa Trump Orders Congress to Go After Deep State Obama Holdovers", "neg"),
-            ("Marked for ‘De-escalation Syrian Towns Endure Surge of Attacks", "pos"),
-            ("Perfume E-Mail Raises a Stink.", "neg"),
-            ("Woman Pricked by Hidden Needle", "neg"),
-            ("Four Accused in Facebook Live Torture Case Plead Not Guilty.", "neg"),
-            ("Mayor Tries to Save Warren Buffett's Old Berkshire Hathaway Headquarters", "pos"),
-            ("Senate Passes Sweeping Republican Tax Overhaul Bill", "pos"),
-            ("Colombian General Captured, Released by Rebels Resigns", "pos"),
-            ("Bulldog Bites Pedophile’s Penis Off as He Tried to Rape Sleeping Children.", "neg"),
-            ("The Scallop Sees With Space-Age Eyes — Hundreds of Them", "pos")
+            ("Marked for ‘De-escalation Syrian Towns Endure Surge of Attacks", "pos")
         ]
-
-        for i in range(10):
-            temp = (train[i][0], train[i][1])
-            temp = (train[i][0].decode('utf-8'), train[i][1])
-            train[i] = temp
-
         cl = NaiveBayesClassifier(train)
-        blob = TextBlob(self.head, classifier = cl)
-        if blob.classify() == "pos":
+        if classify(self.headline) == "pos":
             return 15
         else:
             return 0
-        """
+    '''
+    '''
+
     def find_author(self):
         a = Article(self.url)
         a.download()
@@ -109,7 +117,7 @@ class SecondLayer():
             for author in authors:
                 message += find_author_wiki(self, author) + "\n"
         return message
-
+    '''
     def find_author_wiki(self, author):
         message = "No substantial information about " + author + " found"
         author_names = author.split(" ")
@@ -125,13 +133,13 @@ class SecondLayer():
                 if (content.find(author_names[0]) != -1) and (content.find(author_names[-1]) != -1):
                     return wikipedia.page(result).summary
                 return message
-        """
+
     def parse_suspicious_websites(self):
         websites = []
         category = []
-        with open('sources.csv', 'r', newline='\n') as csvfile:
-            reader = csv.reader(csvfile, delimiter=',')
-            for row in reader:
+        with open('sources.csv', 'r') as csvfile:
+            self.reader = csv.reader(csvfile, delimiter=',')
+            for row in self.reader:
                 websites.append(row[0])
                 if row[1] == "bias":
                     category.append(5)
@@ -151,10 +159,10 @@ class SecondLayer():
                     category.append(5)
                 elif row[1] == "hate":
                     category.append(10)
-        return websites, category
+            return websites, category
 
     def check_TLD(self):
-        url_split_1 = self.url.split('/')
+        self.url_split_1 = self.url.split('/')
         suspicious_TLD = [".country", ".stream", ".gdn", ".mom", ".xin", ".kim",
                             ".men", ".loan", ".download", ".racing", ".online",
                             ".science", ".ren", ".gb", ".win", ".top", ".review",
@@ -162,12 +170,12 @@ class SecondLayer():
         safe_TLD = [".com", ".org", ".edu", ".co", ".gov"]
         trusted_domain = 5
         for i in range(len(suspicious_TLD)):
-            if url_split_1[2].find(suspicious_TLD[i]) != -1:
+            if self.url_split_1[2].find(suspicious_TLD[i]) != -1:
                 trusted_domain = 30
                 break
         if trusted_domain < 30:
             for i in range(len(safe_TLD)):
-                if url_split_1[2].find(safe_TLD[i]) != -1:
+                if self.url_split_1[2].find(safe_TLD[i]) != -1:
                     trusted_domain = -5;
                     break
         return trusted_domain
@@ -175,17 +183,17 @@ class SecondLayer():
     def check_domain(self):
         suspicious_site = 0
         for i in range(len(self.websites)):
-            if (url_split_1[2]).find(self.websites[i]) != -1:
-                suspicious_site = category[i]
+            if (self.url_split_1[2]).find(self.websites[i]) != -1:
+                suspicious_site = self.category[i]
                 break
         return suspicious_site
-        """
+    """
     def check_author(self):
         for message in self.author_info.split("\n"):
             if (message != "No Authors Found") and (message.find("substantial") == -1):
                 return 0
             return 4
-        """
+    """
     def compute_total_score(self):
         final_score = 0
         if self.rating == "REAL":
@@ -221,7 +229,7 @@ def test():
     url = "http://www.breitbart.com/big-government/2017/12/01/michael-flynn-report-trump-white-house-caught-off-guard-flynn-plea-counsel-didnt-know/"
     rating = "FAKE"
     print("Running")
-    test = SecondLayer(input_text, url, rating)
-    print(self.total_score)
+    test = second_layer(input_text, url, rating)
+    print(test.total_score)
 
 test()
