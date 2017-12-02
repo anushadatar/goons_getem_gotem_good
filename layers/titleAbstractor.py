@@ -10,14 +10,12 @@ from sumy.utils import get_stop_words
 
 import os
 from google import google
-from bs4 import BeautifulSoup
-import requests
 
 
 
 
+def crossCheck(self, string)
 url = "https://www.cbsnews.com/news/walmart-pulls-rope-tree-journalist-t-shirt-from-site/"
-parser = HtmlParser.from_url(url, Tokenizer("english"))
 # or for plain text files
 # parser = PlaintextParser.from_file("document.txt", Tokenizer(LANGUAGE))
 stemmer = Stemmer("english")
@@ -25,7 +23,8 @@ stemmer = Stemmer("english")
 summarizer = Summarizer(stemmer)
 summarizer.stop_words = get_stop_words("english")
 
-search = ""
+
+parser = PlaintextParser.from_file(file, Tokenizer("english"))
 
 for sentence in summarizer(parser.document, 1):
     print(sentence)

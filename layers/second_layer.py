@@ -1,8 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from sumy.parsers.html import HtmlParser
+from sumy.parsers.plaintext import PlaintextParser
+from sumy.nlp.tokenizers import Tokenizer
+from sumy.summarizers.lsa import LsaSummarizer as Summarizer
+from sumy.nlp.stemmers import Stemmer
+from sumy.utils import get_stop_words
+
+from google import google
+
+
 from textblob import TextBlob
 from textblob.classifiers import NaiveBayesClassifier
 import grammar_check
+
+
 
 
 # TODO List
@@ -16,7 +28,7 @@ import grammar_check
 
 # TODO Figure out how this compiles into JS for the extensions
 # TODO Figure out how to best hand this over to the UI
-# TODO Add 
+# TODO Add
 # TODO Add text summarization feature
     # Then, add suggestions feature
 
@@ -25,6 +37,7 @@ class second_layer():
     A news article. Should ideally have raw text input.
     """
     def __init__(self, input_text):
+        self.input_text = input_text
         self.raw_text = input_text.decode('utf-8')
         self.head = input_text[0:self.raw_text.find("\n")]
         self.headline = self.head.decode('utf-8')
@@ -33,18 +46,19 @@ class second_layer():
         self.subjectivity = self.text.sentiment[1]
         self.sentiment_metric = self.compute_sentiment_metric()
         self.grammar_metric = self.compute_grammar_metric()
-        self.title_metric = self.compute_clickbait_metric()
+        self.crossCheck = self.crossCheck()
+        #self.title_metric = self.compute_clickbait_metric()
     def compute_sentiment_metric(self):
         """
         Turns string of article text body into a sentiment percentage. The higher
-        the overall polairty (positive/negative bias) or 
+        the overall polairty (positive/negative bias) or
         """
         return ((abs(self.polarity) + self.subjectivity)/2)*100
-    
+
     def compute_grammar_metric(self):
         """
         Computes grammar metric for text set.
-        """ 
+        """
         tool = grammar_check.LanguageTool('en-US')
         matches = tool.check(self.raw_text)
         approximate_number_of_words = self.raw_text.count(" ") + 1
@@ -66,6 +80,34 @@ class second_layer():
             return 100
         else:
             return 0
+
+    def crossCheck(self):
+        #url = "https://www.cbsnews.com/news/walmart-pulls-rope-tree-journalist-t-shirt-from-site/"
+        # or for plain text files
+        # parser = PlaintextParser.from_file("document.txt", Tokenizer(LANGUAGE))
+
+        fileName = "Article.txt"
+        file = open(fileName, "w")
+        file.write(self.input_text)
+        file.close()
+
+        stemmer = Stemmer("english")
+
+        summarizer = Summarizer(stemmer)
+        summarizer.stop_words = get_stop_words("english")
+
+
+        parser = PlaintextParser.from_file("Article.txt", Tokenizer("english"))
+
+        for sentence in summarizer(parser.document, 1):
+            print(sentence)
+            sentence = str(sentence)
+
+        open(fileName, 'w').close()
+        sentence = sentence.decode('utf-8')
+        search_results = google.search(sentence, 1)[0].description
+
+        print(search_results)
 
 
 def test():
