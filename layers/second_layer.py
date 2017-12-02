@@ -46,7 +46,7 @@ import json
 # TODO Add text summarization feature
     # Then, add suggestions feature
 
-class second_layer():
+class SecondLayer():
     """
     A news article. Should ideally have raw text input.
     """
@@ -78,7 +78,7 @@ class second_layer():
         the overall polairty (positive/negative bias) or
         """
         return (((2 * abs(self.polarity) - 1) + (2 * self.subjectivity) - 1) / 2) * 10
-    '''
+    
     def compute_grammar_metric(self):
         """
         Computes grammar metric for text set.
@@ -88,8 +88,7 @@ class second_layer():
         approximate_number_of_words = self.raw_text.count(" ") + 1
         metric =((approximate_number_of_words- len(matches))/float(approximate_number_of_words))
         return (((2 * metric) - 1) * 10)
-    '''
-    '''
+
     def compute_clickbait_metric(self):
         """
         Computes clickbaityness metric for text set.
@@ -103,9 +102,8 @@ class second_layer():
             return 15
         else:
             return 0
-    '''
-    '''
 
+    '''
     def find_author(self):
         a = Article(self.url)
         a.download()
@@ -117,7 +115,7 @@ class second_layer():
             for author in authors:
                 message += find_author_wiki(self, author) + "\n"
         return message
-    '''
+
     def find_author_wiki(self, author):
         message = "No substantial information about " + author + " found"
         author_names = author.split(" ")
@@ -133,7 +131,7 @@ class second_layer():
                 if (content.find(author_names[0]) != -1) and (content.find(author_names[-1]) != -1):
                     return wikipedia.page(result).summary
                 return message
-
+    '''
     def parse_suspicious_websites(self):
         websites = []
         category = []
@@ -194,6 +192,7 @@ class second_layer():
                 return 0
             return 4
     """
+    
     def compute_total_score(self):
         final_score = 0
         if self.rating == "REAL":
@@ -208,7 +207,7 @@ class second_layer():
         return ((final_score * 2) - 100) / 100
 
     def json(self):
-        results = {'final_score': self.final_score,
+        results = {'final_score': self.total_score,
             'sentiment_metric': self.sentiment_metric,
             'title_metric': self.title_metric,
             'grammar_metric': self.grammar_metric,
@@ -216,12 +215,12 @@ class second_layer():
             'TLD_score': self.TLD_score,
             'initial_rating': self.rating}
 
-        results = json.dumps(results)
-        loaded_results = json.loads(results)
-        loaded_results['results'] #Output 3.5
-        type(results) #Output str
-        type(loaded_results) #Output dict
-
+        result = json.dumps(results)
+        loaded_results = json.loads(result)
+        # loaded_results['results'] #Output 3.5
+        # type(results) #Output str
+        #  type(loaded_results) #Output dict
+        return loaded_results
 
 
 def test():
@@ -229,7 +228,7 @@ def test():
     url = "http://www.breitbart.com/big-government/2017/12/01/michael-flynn-report-trump-white-house-caught-off-guard-flynn-plea-counsel-didnt-know/"
     rating = "FAKE"
     print("Running")
-    test = second_layer(input_text, url, rating)
-    print(test.total_score)
+    test = SecondLayer(input_text, url, rating)
+    print(test.json())
 
 test()
