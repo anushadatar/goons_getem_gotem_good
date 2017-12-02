@@ -105,7 +105,7 @@ class second_layer():
             ("The Scallop Sees With Space-Age Eyes — Hundreds of Them", "pos")
         ]
 
-        for i in range(9):
+        for i in range(10):
             temp = (train[i][0], train[i][1])
             temp = (train[i][0].decode('utf-8'), train[i][1])
             train[i] = temp
