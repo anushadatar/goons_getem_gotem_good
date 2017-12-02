@@ -9,6 +9,7 @@ import sys
 import ast
 from time import time
 import matplotlib.pyplot as plt
+import json
 
 from sklearn.feature_extraction.text import HashingVectorizer
 from sklearn.feature_selection import SelectFromModel
@@ -23,51 +24,66 @@ from sklearn import metrics
 from bs4 import BeautifulSoup as Soup
 from textblob import TextBlob
 from goose import Goose
-from requests import get
+from requests import *
+from flask import Flask
+from flask_cors import CORS, cross_origin
 
-url = ""
-if sys.argv[1]:
-	url = sys.argv[1]
-else:
-	print("Error: Website URL not specified.")
-	exit()
 
-response = get(url)
-extractor = Goose()
-article = extractor.extract(raw_html=response.content)
-text = article.cleaned_text
+sys.path.insert(0, '../components/')
 
-ds = pd.Series([text])
+ 
+app = Flask(__name__)
+CORS(app, support_credentials=True, allow_headers='Content-Type',resources={r"/*": {"origins": "*"}})
 
-filename1 = "fake_or_real_news.csv"
-data1 = pd.read_csv(filename1)
+@app.route('/check_selected', methods=['GET','POST'])
+@cross_origin(allow_headers=['Content-Type'],supports_credentials=True, headers='Content-Type')
+def check_selected():
+    global selected
+    post = request.args.get('post', 0, type=str)
+    start = str(post).index('?')
+    print(post.content)
+    return json.dumps("TRUE")
 
-headlines_train = data1.title
-articles_train = data1.text
-states_train = data1.label
+def classifyURL(url):
+	response = get(url)
+	extractor = Goose()
+	article = extractor.extract(raw_html=response.content)
+	text = article.cleaned_text
 
-articles_test = ds
+	ds = pd.Series([text])
 
-k_store = 500
+	filename1 = "fake_or_real_news.csv"
+	data1 = pd.read_csv(filename1)
 
-feature_names = None
+	headlines_train = data1.title
+	articles_train = data1.text
+	states_train = data1.label
 
-vectorizer = HashingVectorizer(stop_words='english', strip_accents='unicode', alternate_sign=False, n_features=500)
-ch2 = SelectKBest(chi2, k=k_store)
-X_train = vectorizer.fit_transform(articles_train)
-X_test = vectorizer.transform(articles_test)
-Y_train = states_train
-X_train = ch2.fit_transform(X_train, Y_train)
+	articles_test = ds
 
-if feature_names:
-	feature_names = [feature_names[i] for i in ch2.get_support(indices=True)]
+	k_store = 500
 
-if feature_names:
-    feature_names = np.asarray(feature_names)
+	feature_names = None
 
-clf = LinearSVC(penalty="l1", dual=False, tol=1e-3)
-clf.fit(X_train, Y_train)
-pred = clf.predict(X_test)
+	vectorizer = HashingVectorizer(stop_words='english', strip_accents='unicode', alternate_sign=False, n_features=500)
+	ch2 = SelectKBest(chi2, k=k_store)
+	X_train = vectorizer.fit_transform(articles_train)
+	X_test = vectorizer.transform(articles_test)
+	Y_train = states_train
+	X_train = ch2.fit_transform(X_train, Y_train)
 
-print(pred[0])
+	if feature_names:
+		feature_names = [feature_names[i] for i in ch2.get_support(indices=True)]
+
+	if feature_names:
+	    feature_names = np.asarray(feature_names)
+
+	clf = LinearSVC(penalty="l1", dual=False, tol=1e-3)
+	clf.fit(X_train, Y_train)
+	pred = clf.predict(X_test)
+	return json.loads(pred[0])
+
+
+if __name__ == "__main__":
+    app.run()
 
