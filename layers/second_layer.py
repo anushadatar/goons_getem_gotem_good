@@ -113,7 +113,6 @@ class second_layer():
         cl = NaiveBayesClassifier(train)
         blob = TextBlob(self.head, classifier = cl)
         if blob.classify() == "pos":
-        if classify(self.headline) == "pos":
             return 15
         else:
             return 0
@@ -207,7 +206,7 @@ class second_layer():
             return 4
     def compute_total_score(self):
         final_score = 0
-        if self.rating = "REAL":
+        if self.rating == "REAL":
             final_score = 25
         else:
             final_score = 75
