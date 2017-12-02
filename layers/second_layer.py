@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from sumy.parsers.html import HtmlParser
 from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
@@ -7,6 +8,7 @@ from sumy.nlp.stemmers import Stemmer
 from sumy.utils import get_stop_words
 
 from google import google
+
 
 from textblob import TextBlob
 from textblob.classifiers import NaiveBayesClassifier
@@ -22,8 +24,14 @@ import csv
 import numpy
 import urllib
 import wikipedia
+import json
+
+
+
+
 
 # TODO List
+# Fix clickbait analyzer
 # Give that a lot more training data`
 # Impletment pandas series to plain text conversion
 # Worry about python 2 and 3 library conflicts
@@ -41,11 +49,10 @@ class second_layer():
     """
     A news article. Should ideally have raw text input.
     """
-    def __init__(self, input_text, url):
+    def __init__(self, input_text, url, rating):
+        self.rating = rating
         self.url = url
-        self.input_text = input_text
         self.raw_text = input_text.decode('utf-8')
-        # TODO It would be nice to be able to just pull the title here.
         self.head = input_text[0:self.raw_text.find("\n")]
         self.headline = self.head.decode('utf-8')
         self.text = TextBlob(self.raw_text)
@@ -53,19 +60,20 @@ class second_layer():
         self.subjectivity = self.text.sentiment[1]
         self.sentiment_metric = self.compute_sentiment_metric()
         self.grammar_metric = self.compute_grammar_metric()
+        self.title_metric = self.compute_clickbait_metric()
         self.author_info = self.find_author()
         self.websites, self.category = self.parse_suspicious_websites()
         self.TLD_score = self.check_TLD()
         self.domain_score = self.check_domain()
         self.author_score = self. check_author()
-        self.crossCheck = self.crossCheck()
+        self.total_score = self.compute_total_score()
 
     def compute_sentiment_metric(self):
         """
         Turns string of article text body into a sentiment percentage. The higher
         the overall polairty (positive/negative bias) or
         """
-        return ((abs(self.polarity) + self.subjectivity)/2)*100
+        return (((2 * abs(self.polarity) - 1) + (2 * self.subjectivity) - 1) / 2) * 10
 
     def compute_grammar_metric(self):
         """
@@ -75,8 +83,22 @@ class second_layer():
         matches = tool.check(self.raw_text)
         approximate_number_of_words = self.raw_text.count(" ") + 1
         metric =((approximate_number_of_words- len(matches))/float(approximate_number_of_words))
-        return (metric * 100)
-       
+        return (((2 * metric) - 1) * 10)
+
+    def compute_clickbait_metric(self):
+        """
+        Computes clickbaityness metric for text set.
+        """
+        train = [
+            ("Whoa Trump Orders Congress to Go After Deep State Obama Holdovers", "neg"),
+            ("Marked for ‘De-escalation Syrian Towns Endure Surge of Attacks", "pos")
+        ]
+        cl = NaiveBayesClassifier(train)
+        if classify(self.headline) == "pos":
+            return 15
+        else:
+            return 0
+
     def find_author(self):
         a = Article(self.url)
         a.download()
@@ -113,23 +135,23 @@ class second_layer():
             for row in reader:
                 websites.append(row[0])
                 if row[1] == "bias":
-                    category.append(2)
+                    category.append(5)
                 elif row[1] == "clickbait":
-                    category.append(1)
+                    category.append(10)
                 elif row[1] == "conspiracy":
-                    category.append(3)
+                    category.append(10)
                 elif row[1] == "unreliable":
-                    category.append(4)
+                    category.append(10)
                 elif row[1] == "fake":
-                    category.append(7)
+                    category.append(15)
                 elif row[1] == "political":
-                    category.append(1)
+                    category.append(15)
                 elif row[1] == "rumor":
-                    category.append(3)
+                    category.append(10)
                 elif row[1] == "junksci":
-                    category.append(3)
+                    category.append(5)
                 elif row[1] == "hate":
-                    category.append(4)
+                    category.append(10)
         return websites, category
 
     def check_TLD(self):
@@ -139,19 +161,20 @@ class second_layer():
                             ".science", ".ren", ".gb", ".win", ".top", ".review",
                             ".vip", ".party", ".tech", ".co.com", ".wordpress"]
         safe_TLD = [".com", ".org", ".edu", ".co", ".gov"]
-
+        trusted_domain = 5
         for i in range(len(suspicious_TLD)):
             if url_split_1[2].find(suspicious_TLD[i]) != -1:
-                trusted_domain = 4
+                trusted_domain = 30
                 break
-        if trusted_domain < 1:
+        if trusted_domain < 30:
             for i in range(len(safe_TLD)):
                 if url_split_1[2].find(safe_TLD[i]) != -1:
-                    trusted_domain = 0;
+                    trusted_domain = -5;
                     break
         return trusted_domain
 
     def check_domain(self):
+        suspicious_site = 0
         for i in range(len(self.websites)):
             if (url_split_1[2]).find(self.websites[i]) != -1:
                 suspicious_site = category[i]
@@ -163,32 +186,40 @@ class second_layer():
             if (message != "No Authors Found") and (message.find("substantial") == -1):
                 return 0
             return 4
+    def compute_total_score(self):
+        final_score = 0
+        if self.rating = "REAL":
+            final_score = 25
+        else:
+            final_score = 75
+        final_score += self.TLD_score + self.domain_score + self.grammar_metric + self.sentiment_metric + self.title_metric
+        if final_score > 99:
+            final_score = 99
+        if final score < 1:
+            final_score = 1
+        return ((final_score * 2) - 100) / 100
 
-    def crossCheck(self):
-        #url = "https://www.cbsnews.com/news/walmart-pulls-rope-tree-journalist-t-shirt-from-site/"
-        # or for plain text files
-        # parser = PlaintextParser.from_file("document.txt", Tokenizer(LANGUAGE))
+    def json(self):
+        results = {'final_score': self.final_score,
+            'sentiment_metric': self.sentiment_metric,
+            'title_metric': self.title_metric,
+            'grammar_metric': self.grammar_metric,
+            'domain_score': self.domain_score,
+            'TLD_score': self.TLD_score,
+            'initial_rating': self.rating}
 
-        fileName = "Article.txt"
-        file = open(fileName, "w")
-        file.write(self.input_text)
-        file.close()
-
-        stemmer = Stemmer("english")
-
-        summarizer = Summarizer(stemmer)
-        summarizer.stop_words = get_stop_words("english")
+        results = json.dumps(results)
+        loaded_results = json.loads(results)
+        loaded_results['results'] #Output 3.5
+        type(results) #Output str
+        type(loaded_results) #Output dict
 
 
-        parser = PlaintextParser.from_file("Article.txt", Tokenizer("english"))
 
-        for sentence in summarizer(parser.document, 1):
-            print(sentence)
-            sentence = str(sentence)
+def test():
+    input_text = "Hip Hop star Jay-Z has blasted traditional Christian values \n an epic rant where he claims to be part of an exclusive club of “Smart people” who worships “our true lord; Satan.” The billionaire rapper has also claimed that “God created Lucifer to be the bearer of truth and light, and that “Jesus never existed” but was merely a “tool created by smart people to control dumb people.”During a backstage tirade at the Smoothie King Center in New Orleans on Friday, Jay Z pointed around the room saying, “Ya’ll are being played.”"
+    print("Running")
+    test = second_layer(input_text)
+    print(vars(test))
 
-        open(fileName, 'w').close()
-        sentence = sentence.decode('utf-8')
-        search_results = google.search(sentence, 1)[0].description
-
-        print(search_results)
-
+test()

@@ -8,7 +8,7 @@ import csv
 import numpy
 import urllib
 
-site_url = "http://www.wsj.com/public/page/archive-2014-1-1.html"
+site_url = "http://www.wsj.com/public/page/archive-2016-1-1.html"
 site = requests.get(site_url)
 soup = BeautifulSoup(site.content, "lxml")
 
@@ -18,7 +18,7 @@ article_label = []
 url_array = []
 unique = True;
 counter = 0
-year = "2014"
+year = "2016"
 
 
 def find_links(soup, position, key1, key2):
@@ -57,7 +57,7 @@ def csv_writer(url):
         article_label.append("REAL")
         print('\033[94m' + articles[j])
 
-        with open('../../yhack training data/wsj_2014.csv', 'a', newline='\n') as csvfile:
+        with open('../../yhack training data/wsj_2016.csv', 'a', newline='\n') as csvfile:
             writer = csv.writer(csvfile, delimiter=',')
             writer.writerow([a.title, a.text, "REAL"])
 
