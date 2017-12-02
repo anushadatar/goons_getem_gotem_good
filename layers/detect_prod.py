@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python
 from __future__ import print_function
 
 import logging
@@ -101,3 +101,4 @@ if __name__ == "__main__":
     app.run()
 
 app.run(debug=True)
+
