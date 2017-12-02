@@ -1,8 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from sumy.parsers.html import HtmlParser
+from sumy.parsers.plaintext import PlaintextParser
+from sumy.nlp.tokenizers import Tokenizer
+from sumy.summarizers.lsa import LsaSummarizer as Summarizer
+from sumy.nlp.stemmers import Stemmer
+from sumy.utils import get_stop_words
+
+from google import google
+
+
 from textblob import TextBlob
 from textblob.classifiers import NaiveBayesClassifier
 import grammar_check
+
+
 
 
 # TODO List
@@ -16,7 +28,7 @@ import grammar_check
 
 # TODO Figure out how this compiles into JS for the extensions
 # TODO Figure out how to best hand this over to the UI
-# TODO Add 
+# TODO Add
 # TODO Add text summarization feature
     # Then, add suggestions feature
 
@@ -37,14 +49,14 @@ class second_layer():
     def compute_sentiment_metric(self):
         """
         Turns string of article text body into a sentiment percentage. The higher
-        the overall polairty (positive/negative bias) or 
+        the overall polairty (positive/negative bias) or
         """
         return ((abs(self.polarity) + self.subjectivity)/2)*100
-    
+
     def compute_grammar_metric(self):
         """
         Computes grammar metric for text set.
-        """ 
+        """
         tool = grammar_check.LanguageTool('en-US')
         matches = tool.check(self.raw_text)
         approximate_number_of_words = self.raw_text.count(" ") + 1
@@ -64,6 +76,32 @@ class second_layer():
             return 100
         else:
             return 0
+    def crossCheck(self):
+        #url = "https://www.cbsnews.com/news/walmart-pulls-rope-tree-journalist-t-shirt-from-site/"
+        # or for plain text files
+        # parser = PlaintextParser.from_file("document.txt", Tokenizer(LANGUAGE))
+
+        fileName = "Article.txt"
+        file = open(fileName, "w")
+        file.write(self.raw_text)
+        file.close()
+
+        stemmer = Stemmer("english")
+
+        summarizer = Summarizer(stemmer)
+        summarizer.stop_words = get_stop_words("english")
+
+
+        parser = PlaintextParser.from_file("Article.txt", Tokenizer("english"))
+
+        for sentence in summarizer(parser.document, 1):
+            print(sentence)
+            sentence = str(sentence)
+
+        open(filename, 'w').close()
+
+        search_results = google.search(sentence, num_page)
+
 
 
 def test():
