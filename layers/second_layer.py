@@ -14,6 +14,19 @@ from textblob import TextBlob
 from textblob.classifiers import NaiveBayesClassifier
 import grammar_check
 
+from newspaper import Article
+import newspaper
+import requests
+import dateutil
+from bs4 import BeautifulSoup
+import requests
+import csv
+import numpy
+import urllib
+import wikipedia
+import json
+
+
 
 
 
@@ -36,8 +49,9 @@ class second_layer():
     """
     A news article. Should ideally have raw text input.
     """
-    def __init__(self, input_text):
-        self.input_text = input_text
+    def __init__(self, input_text, url, rating):
+        self.rating = rating
+        self.url = url
         self.raw_text = input_text.decode('utf-8')
         self.head = input_text[0:self.raw_text.find("\n")]
         self.headline = self.head.decode('utf-8')
@@ -46,14 +60,23 @@ class second_layer():
         self.subjectivity = self.text.sentiment[1]
         self.sentiment_metric = self.compute_sentiment_metric()
         self.grammar_metric = self.compute_grammar_metric()
+
         self.crossCheck = self.crossCheck()
         self.title_metric = self.compute_clickbait_metric()
+        self.title_metric = self.compute_clickbait_metric()
+        self.author_info = self.find_author()
+        self.websites, self.category = self.parse_suspicious_websites()
+        self.TLD_score = self.check_TLD()
+        self.domain_score = self.check_domain()
+        self.author_score = self. check_author()
+        self.total_score = self.compute_total_score()
+
     def compute_sentiment_metric(self):
         """
         Turns string of article text body into a sentiment percentage. The higher
         the overall polairty (positive/negative bias) or
         """
-        return ((abs(self.polarity) + self.subjectivity)/2)*100
+        return (((2 * abs(self.polarity) - 1) + (2 * self.subjectivity) - 1) / 2) * 10
 
     def compute_grammar_metric(self):
         """
@@ -63,7 +86,7 @@ class second_layer():
         matches = tool.check(self.raw_text)
         approximate_number_of_words = self.raw_text.count(" ") + 1
         metric =((approximate_number_of_words- len(matches))/float(approximate_number_of_words))
-        return (metric * 100)
+        return (((2 * metric) - 1) * 10)
 
     def compute_clickbait_metric(self):
         """
@@ -90,37 +113,126 @@ class second_layer():
         cl = NaiveBayesClassifier(train)
         blob = TextBlob(self.head, classifier = cl)
         if blob.classify() == "pos":
+        if classify(self.headline) == "pos":
             return 15
         else:
             return 0
 
-    def crossCheck(self):
-        #url = "https://www.cbsnews.com/news/walmart-pulls-rope-tree-journalist-t-shirt-from-site/"
-        # or for plain text files
-        # parser = PlaintextParser.from_file("document.txt", Tokenizer(LANGUAGE))
+    def find_author(self):
+        a = Article(self.url)
+        a.download()
+        a.parse()
+        authors = a.authors
+        message = "No Authors Found"
+        if authors != None:
+            message = ""
+            for author in authors:
+                message += find_author_wiki(self, author) + "\n"
+        return message
 
-        fileName = "Article.txt"
-        file = open(fileName, "w")
-        file.write(self.input_text)
-        file.close()
+    def find_author_wiki(self, author):
+        message = "No substantial information about " + author + " found"
+        author_names = author.split(" ")
+        if wikipedia.search(author) == None:
+            return message
+        else:
+            if len(wikipedia.search(author)) < 5:
+                searches = len(wikipedia.search(author))
+            else:
+                searches = 5
+            for result in wikipedia.search(author):
+                content = wikipedia.page(result).content
+                if (content.find(author_names[0]) != -1) and (content.find(author_names[-1]) != -1):
+                    return wikipedia.page(result).summary
+                return message
 
-        stemmer = Stemmer("english")
+    def parse_suspicious_websites(self):
+        websites = []
+        category = []
+        with open('sources.csv', 'r', newline='') as csvfile:
+            reader = csv.reader(csvfile, delimiter=',')
+            for row in reader:
+                websites.append(row[0])
+                if row[1] == "bias":
+                    category.append(5)
+                elif row[1] == "clickbait":
+                    category.append(10)
+                elif row[1] == "conspiracy":
+                    category.append(10)
+                elif row[1] == "unreliable":
+                    category.append(10)
+                elif row[1] == "fake":
+                    category.append(15)
+                elif row[1] == "political":
+                    category.append(15)
+                elif row[1] == "rumor":
+                    category.append(10)
+                elif row[1] == "junksci":
+                    category.append(5)
+                elif row[1] == "hate":
+                    category.append(10)
+        return websites, category
 
-        summarizer = Summarizer(stemmer)
-        summarizer.stop_words = get_stop_words("english")
+    def check_TLD(self):
+        url_split_1 = self.url.split('/')
+        suspicious_TLD = [".country", ".stream", ".gdn", ".mom", ".xin", ".kim",
+                            ".men", ".loan", ".download", ".racing", ".online",
+                            ".science", ".ren", ".gb", ".win", ".top", ".review",
+                            ".vip", ".party", ".tech", ".co.com", ".wordpress"]
+        safe_TLD = [".com", ".org", ".edu", ".co", ".gov"]
+        trusted_domain = 5
+        for i in range(len(suspicious_TLD)):
+            if url_split_1[2].find(suspicious_TLD[i]) != -1:
+                trusted_domain = 30
+                break
+        if trusted_domain < 30:
+            for i in range(len(safe_TLD)):
+                if url_split_1[2].find(safe_TLD[i]) != -1:
+                    trusted_domain = -5;
+                    break
+        return trusted_domain
 
+    def check_domain(self):
+        suspicious_site = 0
+        for i in range(len(self.websites)):
+            if (url_split_1[2]).find(self.websites[i]) != -1:
+                suspicious_site = category[i]
+                break
+        return suspicious_site
 
-        parser = PlaintextParser.from_file("Article.txt", Tokenizer("english"))
+    def check_author(self):
+        for message in self.author_info.split("\n"):
+            if (message != "No Authors Found") and (message.find("substantial") == -1):
+                return 0
+            return 4
+    def compute_total_score(self):
+        final_score = 0
+        if self.rating = "REAL":
+            final_score = 25
+        else:
+            final_score = 75
+        final_score += self.TLD_score + self.domain_score + self.grammar_metric + self.sentiment_metric + self.title_metric
+        if final_score > 99:
+            final_score = 99
+        if final score < 1:
+            final_score = 1
+        return ((final_score * 2) - 100) / 100
 
-        for sentence in summarizer(parser.document, 1):
-            print(sentence)
-            sentence = str(sentence)
+    def json(self):
+        results = {'final_score': self.final_score,
+            'sentiment_metric': self.sentiment_metric,
+            'title_metric': self.title_metric,
+            'grammar_metric': self.grammar_metric,
+            'domain_score': self.domain_score,
+            'TLD_score': self.TLD_score,
+            'initial_rating': self.rating}
 
-        open(fileName, 'w').close()
-        sentence = sentence.decode('utf-8')
-        search_results = google.search(sentence, 1)[0].description
+        results = json.dumps(results)
+        loaded_results = json.loads(results)
+        loaded_results['results'] #Output 3.5
+        type(results) #Output str
+        type(loaded_results) #Output dict
 
-        print(type(search_results))
 
 
 def test():
