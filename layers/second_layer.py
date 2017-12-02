@@ -37,6 +37,7 @@ class second_layer():
     A news article. Should ideally have raw text input.
     """
     def __init__(self, input_text):
+        self.input_text = input_text
         self.raw_text = input_text.decode('utf-8')
         self.head = input_text[0:self.raw_text.find("\n")]
         self.headline = self.head.decode('utf-8')
@@ -45,7 +46,8 @@ class second_layer():
         self.subjectivity = self.text.sentiment[1]
         self.sentiment_metric = self.compute_sentiment_metric()
         self.grammar_metric = self.compute_grammar_metric()
-        self.title_metric = self.compute_clickbait_metric()
+        self.crossCheck = self.crossCheck()
+        #self.title_metric = self.compute_clickbait_metric()
     def compute_sentiment_metric(self):
         """
         Turns string of article text body into a sentiment percentage. The higher
@@ -76,6 +78,7 @@ class second_layer():
             return 100
         else:
             return 0
+
     def crossCheck(self):
         #url = "https://www.cbsnews.com/news/walmart-pulls-rope-tree-journalist-t-shirt-from-site/"
         # or for plain text files
@@ -83,7 +86,7 @@ class second_layer():
 
         fileName = "Article.txt"
         file = open(fileName, "w")
-        file.write(self.raw_text)
+        file.write(self.input_text)
         file.close()
 
         stemmer = Stemmer("english")
@@ -98,10 +101,11 @@ class second_layer():
             print(sentence)
             sentence = str(sentence)
 
-        open(filename, 'w').close()
+        open(fileName, 'w').close()
+        sentence = sentence.decode('utf-8')
+        search_results = google.search(sentence, 1)[0].description
 
-        search_results = google.search(sentence, num_page)
-
+        print(search_results)
 
 
 def test():
