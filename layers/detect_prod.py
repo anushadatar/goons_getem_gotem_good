@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 from __future__ import print_function
 
 import logging
@@ -25,7 +25,7 @@ from bs4 import BeautifulSoup as Soup
 from textblob import TextBlob
 from goose import Goose
 from requests import *
-from flask import Flask
+from flask import Flask,request
 from flask_cors import CORS, cross_origin
 from flask.ext.cors import CORS
 
@@ -45,10 +45,9 @@ cors = CORS(app)
 @app.route('/check_selected', methods=['POST'])
 def check_selected():
     global selected
-    post = request.args.get('post', 0, type=str)
-    start = str(post).index('?')
-    print(post.content)
-    return json.dumps("TRUE")
+    query = request.data
+    print(query)
+    return (classifyURL(str(query)[1:-1]))
 
 def classifyURL(url):
 	response = get(url)
@@ -87,7 +86,7 @@ def classifyURL(url):
 	clf = LinearSVC(penalty="l1", dual=False, tol=1e-3)
 	clf.fit(X_train, Y_train)
 	pred = clf.predict(X_test)
-	return json.loads(pred[0])
+	return (pred[0])
 
 @app.after_request
 def after_request(response):
@@ -100,5 +99,4 @@ def after_request(response):
 if __name__ == "__main__":
     app.run()
 
-app.run(debug=True)
-
+app.run()

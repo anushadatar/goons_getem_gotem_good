@@ -1,13 +1,23 @@
 $(document).keypress(function(e) {
     if(e.which == 13) {
         var searchstring  = $("#search").val();
+        $("#entry_main").fadeOut();
+        $("#loading_main").fadeIn();
         xdr("http://127.0.0.1:5000/check_selected","POST",JSON.stringify(searchstring),getFStat,errThrow)
-        //postPython(searchstring);
     }
 });
 
 function getFStat(x) {
-	alert(x);
+	
+	$("#loading_main").fadeOut();
+	$("#status_main").fadeIn();
+	if(x === "REAL") {
+		$("#status").attr("class","reliable")
+	} else if (x === "FALSE") {
+		$("#status").attr("class","fake")
+	}
+	
+	$("#status_main").text(x);
 }
 
 function errThrow(x) {
