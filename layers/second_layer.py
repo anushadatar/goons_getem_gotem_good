@@ -59,6 +59,8 @@ class second_layer():
             ("Whoa Trump Orders Congress to Go After Deep State Obama Holdovers", "neg"),
             ("Marked for ‘De-escalation Syrian Towns Endure Surge of Attacks", "pos")
         ]
+        for string in train:
+            temp  = string[0].decode('utf-8')
         cl = NaiveBayesClassifier(train)
         if classify(self.headline) == "pos":
             return 100
