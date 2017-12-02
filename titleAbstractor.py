@@ -13,7 +13,7 @@ import grammar_check
 
 
 
-url = "https://www.cnbc.com/2017/12/01/abc-news-issues-corrects-bombshell-michael-flynn-report.html"
+url = "https://www.wired.com/story/uber-waymo-gm-infiniti-lucid/"
 parser = HtmlParser.from_url(url, Tokenizer("english"))
 # or for plain text files
 # parser = PlaintextParser.from_file("document.txt", Tokenizer(LANGUAGE))
@@ -30,12 +30,12 @@ for sentence in summarizer(parser.document, 1):
     tagged = nltk.pos_tag(tokens)
 
     for element in tagged:
-        if element[1] == 'NNP' or element[1] == 'NNPS' or element[1] == 'VB' or element[1] == 'VBD' or element[1] == 'VBG' or element[1] == 'VBN' or element[1] == 'VBP' or element[1] == 'VBZ':
+        if element[1] == 'NNP' or element[1] == 'NNPS' or element[1] == 'NN' or element[1] == 'VB' or element[1] == 'VBD' or element[1] == 'VBG' or element[1] == 'VBN' or element[1] == 'VBP' or element[1] == 'VBZ':
             search += element[0] + " "
 
 search = str(search)
 
 tool = grammar_check.LanguageTool('en-GB')
-matches = tool.check('ABC cited saying Flynn was prepared testify made Trump was')
-new = grammar_check.correct('ABC cited saying Flynn was prepared testify made Trump was', matches)
-print(new)
+matches = tool.check(search)
+new = grammar_check.correct(search, matches)
+print(search)
