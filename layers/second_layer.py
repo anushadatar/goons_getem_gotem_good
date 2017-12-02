@@ -7,9 +7,8 @@ from sumy.summarizers.lsa import LsaSummarizer as Summarizer
 from sumy.nlp.stemmers import Stemmer
 from sumy.utils import get_stop_words
 
+# Commenting out things we are not currently using.
 #from google import google
-#import goolge
-
 
 from textblob import TextBlob
 from textblob.classifiers import NaiveBayesClassifier
@@ -27,26 +26,7 @@ import urllib
 import wikipedia
 import json
 
-
-
-
-
-# TODO List
-# Fix clickbait analyzer
-# Give that a lot more training data`
-# Impletment pandas series to plain text conversion
-# Worry about python 2 and 3 library conflicts
-# Think about how to hand data over the UI
-# Build the entire UI and also the web framework (oh yeah, that)
-# Implement alternate article lookup
-
-# TODO Figure out how this compiles into JS for the extensions
-# TODO Figure out how to best hand this over to the UI
-# TODO Add
-# TODO Add text summarization feature
-    # Then, add suggestions feature
-
-class second_layer():
+class SecondLayer():
     """
     A news article. Should ideally have raw text input.
     """
@@ -62,14 +42,14 @@ class second_layer():
         self.sentiment_metric = self.compute_sentiment_metric()
         self.grammar_metric = self.compute_grammar_metric()
 
-        self.crossCheck = self.crossCheck()
+        #  self.crossCheck = self.crossCheck()
         self.title_metric = self.compute_clickbait_metric()
         self.title_metric = self.compute_clickbait_metric()
-        self.author_info = self.find_author()
+        # self.author_info = self.find_author()
         self.websites, self.category = self.parse_suspicious_websites()
         self.TLD_score = self.check_TLD()
         self.domain_score = self.check_domain()
-        self.author_score = self. check_author()
+        # self.author_score = self. check_author()
         self.total_score = self.compute_total_score()
 
     def compute_sentiment_metric(self):
@@ -89,7 +69,6 @@ class second_layer():
         metric =((approximate_number_of_words- len(matches))/float(approximate_number_of_words))
         return (((2 * metric) - 1) * 10)
 
-    '''
     def compute_clickbait_metric(self):
         """
         Computes clickbaityness metric for text set.
@@ -118,8 +97,7 @@ class second_layer():
             return 15
         else:
             return 0
-    '''
-
+        """
     def find_author(self):
         a = Article(self.url)
         a.download()
@@ -147,11 +125,11 @@ class second_layer():
                 if (content.find(author_names[0]) != -1) and (content.find(author_names[-1]) != -1):
                     return wikipedia.page(result).summary
                 return message
-
+        """
     def parse_suspicious_websites(self):
         websites = []
         category = []
-        with open('sources.csv', 'r', newline='') as csvfile:
+        with open('sources.csv', 'r', newline='\n') as csvfile:
             reader = csv.reader(csvfile, delimiter=',')
             for row in reader:
                 websites.append(row[0])
@@ -201,12 +179,13 @@ class second_layer():
                 suspicious_site = category[i]
                 break
         return suspicious_site
-
+        """
     def check_author(self):
         for message in self.author_info.split("\n"):
             if (message != "No Authors Found") and (message.find("substantial") == -1):
                 return 0
             return 4
+        """
     def compute_total_score(self):
         final_score = 0
         if self.rating == "REAL":
@@ -242,7 +221,7 @@ def test():
     url = "http://www.breitbart.com/big-government/2017/12/01/michael-flynn-report-trump-white-house-caught-off-guard-flynn-plea-counsel-didnt-know/"
     rating = "FAKE"
     print("Running")
-    test = second_layer(input_text, url, rating)
+    test = SecondLayer(input_text, url, rating)
     print(self.total_score)
 
 test()
