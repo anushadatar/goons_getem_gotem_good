@@ -57,7 +57,7 @@ def csv_writer(url):
         article_label.append("REAL")
         print('\033[94m' + articles[j])
 
-        with open('wsj_2014.csv', 'a', newline='\n') as csvfile:
+        with open('../../yhack training data/wsj_2014.csv', 'a', newline='\n') as csvfile:
             writer = csv.writer(csvfile, delimiter=',')
             writer.writerow([a.title, a.text, "REAL"])
 
