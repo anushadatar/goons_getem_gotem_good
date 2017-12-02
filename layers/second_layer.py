@@ -6,7 +6,8 @@ import grammar_check
 
 
 # TODO List
-# Implement clickbaity headline analyzer
+# Fix clickbait analyzer
+# Give that a lot more training data`
 # Impletment pandas series to plain text conversion
 # Worry about python 2 and 3 library conflicts
 # Think about how to hand data over the UI
@@ -18,8 +19,6 @@ import grammar_check
 # TODO Add 
 # TODO Add text summarization feature
     # Then, add suggestions feature
-
-input_text = '''Hip Hop star Jay Z has blasted traditional Christian values in an epic rant where he claims to be part of an exclusive club of “Smart people” who worships “our true lord; Satan.”  The billionaire rapper has also claimed that “God created Lucifer to be the bearer of truth and light, and that “Jesus never existed” but was merely a “tool created by smart people to control dumb people.” During a backstage tirade at the Smoothie King Center in New Orleans on Friday, Jay Z pointed around the room saying, Ya’ll are being played.'''
 
 class second_layer():
     """
