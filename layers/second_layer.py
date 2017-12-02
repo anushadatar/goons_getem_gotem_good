@@ -47,7 +47,7 @@ class second_layer():
         self.sentiment_metric = self.compute_sentiment_metric()
         self.grammar_metric = self.compute_grammar_metric()
         self.crossCheck = self.crossCheck()
-        #self.title_metric = self.compute_clickbait_metric()
+        self.title_metric = self.compute_clickbait_metric()
     def compute_sentiment_metric(self):
         """
         Turns string of article text body into a sentiment percentage. The higher
@@ -71,11 +71,26 @@ class second_layer():
         """
         train = [
             ("Whoa Trump Orders Congress to Go After Deep State Obama Holdovers", "neg"),
-            ("Marked for ‘De-escalation Syrian Towns Endure Surge of Attacks", "pos")
+            ("Marked for ‘De-escalation Syrian Towns Endure Surge of Attacks", "pos"),
+            ("Perfume E-Mail Raises a Stink.", "neg"),
+            ("Woman Pricked by Hidden Needle", "neg"),
+            ("Four Accused in Facebook Live Torture Case Plead Not Guilty.", "neg"),
+            ("Mayor Tries to Save Warren Buffett's Old Berkshire Hathaway Headquarters", "pos"),
+            ("Senate Passes Sweeping Republican Tax Overhaul Bill", "pos"),
+            ("Colombian General Captured, Released by Rebels Resigns", "pos"),
+            ("Bulldog Bites Pedophile’s Penis Off as He Tried to Rape Sleeping Children.", "neg"),
+            ("The Scallop Sees With Space-Age Eyes — Hundreds of Them", "pos")
         ]
+
+        for i in range(9):
+            temp = (train[i][0], train[i][1])
+            temp = (train[i][0].decode('utf-8'), train[i][1])
+            train[i] = temp
+
         cl = NaiveBayesClassifier(train)
-        if classify(self.headline) == "pos":
-            return 100
+        blob = TextBlob(self.head, classifier = cl)
+        if blob.classify() == "pos":
+            return 15
         else:
             return 0
 
@@ -105,7 +120,7 @@ class second_layer():
         sentence = sentence.decode('utf-8')
         search_results = google.search(sentence, 1)[0].description
 
-        print(search_results)
+        print(type(search_results))
 
 
 def test():
