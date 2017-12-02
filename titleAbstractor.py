@@ -27,7 +27,7 @@ summarizer.stop_words = get_stop_words("english")
 
 search = ""
 
-for sentence in summarizer(parser.document, 1):
+for sentence in summarizer("RTDNA noted in its emailed complaint that nearly three dozen journalists have been assaulted in the U.S. this year “merely for performing their Constitutionally-guaranteed duty to seek and report the truth.” Such messages “inflame the passions” of those who don’t like the media and, at worst, “openly encourage violence targeting journalists,” added the email, written by RTDNA’s executive director, Dan Shelley.", 1):
     print(sentence)
     sentence = str(sentence)
 
