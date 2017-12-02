@@ -24,8 +24,8 @@ import requests
 import csv
 import numpy
 import urllib
-
-site_url = "http://www.sldkjflsdjfbvanews.com"
+import wikipedia
+site_url = "http://www.breitbart.com/big-government/2017/12/01/michael-flynn-report-trump-white-house-caught-off-guard-flynn-plea-counsel-didnt-know/"
 
 trusted_domain = 2
 about_us = None
@@ -39,6 +39,25 @@ safe_TLD = [".com", ".org", ".edu", ".co", ".gov"]
 suspicious_websites = []
 websites = []
 category = []
+
+def find_author(author):
+    message = "No substantial information about " + author + " found"
+    author_names = author.split(" ")
+    if wikipedia.search(author) == None:
+        return message
+    else:
+        if len(wikipedia.search(author)) < 5:
+            searches = len(wikipedia.search(author))
+        else:
+            searches = 5
+        for result in wikipedia.search(author):
+            content = wikipedia.page(result).content
+            if (content.find(author_names[0]) != -1) and (content.find(author_names[-1]) != -1):
+                return wikipedia.page(result).summary
+            return message
+
+
+
 
 with open('sources.csv', 'r', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
@@ -89,6 +108,11 @@ for i in range(len(websites)):
 
 total_score = trusted_domain + suspicious_site
 print(total_score)
-#a = Article(site_url)
-#a.download()
-#a.parse()
+a = Article(site_url)
+a.download()
+a.parse()
+
+
+authors = a.authors
+for author in authors:
+    print(find_author(author))
