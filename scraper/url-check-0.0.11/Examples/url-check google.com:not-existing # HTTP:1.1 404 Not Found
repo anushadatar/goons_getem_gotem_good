@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+set -x;
+url-check "https://www.google.com/not-existing" # HTTP/1.1 404 Not Found
+:
