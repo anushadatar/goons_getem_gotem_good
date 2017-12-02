@@ -7,15 +7,16 @@ from sumy.summarizers.lsa import LsaSummarizer as Summarizer
 from sumy.nlp.stemmers import Stemmer
 from sumy.utils import get_stop_words
 
-from google import google
+#from google import google
+#import goolge
 
 
 from textblob import TextBlob
 from textblob.classifiers import NaiveBayesClassifier
 import grammar_check
 
-from newspaper import Article
-import newspaper
+#from newspaper import Article
+#import newspaper
 import requests
 import dateutil
 from bs4 import BeautifulSoup
@@ -85,6 +86,7 @@ class second_layer():
         metric =((approximate_number_of_words- len(matches))/float(approximate_number_of_words))
         return (((2 * metric) - 1) * 10)
 
+    '''
     def compute_clickbait_metric(self):
         """
         Computes clickbaityness metric for text set.
@@ -98,6 +100,7 @@ class second_layer():
             return 15
         else:
             return 0
+    '''
 
     def find_author(self):
         a = Article(self.url)
@@ -188,14 +191,14 @@ class second_layer():
             return 4
     def compute_total_score(self):
         final_score = 0
-        if self.rating = "REAL":
+        if self.rating == "REAL":
             final_score = 25
         else:
             final_score = 75
         final_score += self.TLD_score + self.domain_score + self.grammar_metric + self.sentiment_metric + self.title_metric
         if final_score > 99:
             final_score = 99
-        if final score < 1:
+        if final_score < 1:
             final_score = 1
         return ((final_score * 2) - 100) / 100
 
@@ -218,8 +221,10 @@ class second_layer():
 
 def test():
     input_text = "Hip Hop star Jay-Z has blasted traditional Christian values \n an epic rant where he claims to be part of an exclusive club of “Smart people” who worships “our true lord; Satan.” The billionaire rapper has also claimed that “God created Lucifer to be the bearer of truth and light, and that “Jesus never existed” but was merely a “tool created by smart people to control dumb people.”During a backstage tirade at the Smoothie King Center in New Orleans on Friday, Jay Z pointed around the room saying, “Ya’ll are being played.”"
+    url = "http://www.breitbart.com/big-government/2017/12/01/michael-flynn-report-trump-white-house-caught-off-guard-flynn-plea-counsel-didnt-know/"
+    rating = "FAKE"
     print("Running")
-    test = second_layer(input_text)
-    print(vars(test))
+    test = second_layer(input_text, url, rating)
+    print(self.total_score)
 
 test()
