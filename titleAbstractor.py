@@ -8,8 +8,11 @@ from sumy.summarizers.lsa import LsaSummarizer as Summarizer
 from sumy.nlp.stemmers import Stemmer
 from sumy.utils import get_stop_words
 
-import nltk
-import grammar_check
+import os
+from google import google
+from bs4 import BeautifulSoup
+import requests
+
 
 
 
@@ -27,3 +30,7 @@ search = ""
 for sentence in summarizer(parser.document, 1):
     print(sentence)
     sentence = str(sentence)
+
+num_page = 1
+
+search_results = google.search(sentence, num_page)
