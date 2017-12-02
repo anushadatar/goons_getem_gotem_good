@@ -1,0 +1,17 @@
+body{
+  background: #343d46;
+  font-family: 'Barlow Semi Condensed', sans-serif;
+  color: white;
+}
+ 
+.box{
+  margin: 100px auto;
+  width: 600px;
+  height: 120px;
+}
+
+[type="search"] {
+    outline-offset: -2px;
+    -webkit-appearance: none;
+    
+}
