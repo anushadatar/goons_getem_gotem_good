@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python
 from __future__ import print_function
 
 import logging
@@ -86,4 +86,3 @@ def classifyURL(url):
 
 if __name__ == "__main__":
     app.run()
-
