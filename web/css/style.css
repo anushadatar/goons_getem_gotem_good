@@ -115,6 +115,12 @@ visibility:visible;
   outline: 1px solid transparent;
 }
 
+.img-circle {
+    border-radius: 50%;
+    max-width: 70%;
+    height: auto;
+    width: auto;
+}
 
  #largeBox {
     height: 3em;

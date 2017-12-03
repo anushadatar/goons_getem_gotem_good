@@ -56,28 +56,28 @@ def update_dict_pos():
     global poll
     query = request.data
     print(query)
-    link_name =(str(query)[1:-1])
-    print("yes!")
-    if polling_data[link_name] is None:
-        polling_data[link_name] = [1, 0]
+    link_name = str(query)
+    if link_name in polling_data:
+    	polling_data[link_name][0] += 1
     else:
-        polling_data[link_name][0] += 1
-    return_results()
+        polling_data[link_name] = [1, 0]
+    return jsonify(polling_data)
 
 def return_results(url):
-    return polling_data[url]
+    return str(polling_data[url])
 
 @app.route('/update_polls_neg', methods=["POST"])
 def update_dict_neg():
     global poll
     query = request.data
     print(query)
-    link_name = (str(query)[1:-1])
-    if polling_data[link_name] is None:
-        polling_data[link_name] = [0, 1]
+    link_name = str(query)
+    if link_name in polling_data:
+    	polling_data[link_name][1] += 1
     else:
-        polling_data[link_name][1] += 1
-    return_results
+        polling_data[link_name] = [0, 1]
+    return jsonify(polling_data)
+
 
 @app.route('/check_selected', methods=['POST'])
 def check_selected():
