@@ -25,11 +25,11 @@ from bs4 import BeautifulSoup as Soup
 from textblob import TextBlob
 from goose import Goose
 from requests import *
-from flask import Flask,request
+from flask import Flask,request, render_template
 from flask_cors import CORS, cross_origin
 from flask.ext.cors import CORS
 
-from second_layer import SecondLayer
+# from second_layer import SecondLayer
 
 sys.path.insert(0, '../components/')
 
@@ -49,6 +49,17 @@ polling_data = {}
 
 @cross_origin(origin='*',allow_headers="*",send_wildcard='true')
 
+@app.route('/methods.html')
+def methods():
+    return render_template('methods.html')
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/about.html')
+def about():
+    return render_template('about.html')
 
 
 @app.route('/update_polls_pos', methods=["POST"])

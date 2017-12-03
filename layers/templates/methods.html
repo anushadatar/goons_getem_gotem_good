@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>NewsBlind- Fake News Classifier</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Barlow+Semi+Condensed" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="js/script_face.js"></script>
+
+    <style>
+      body {
+        padding-top: 54px;
+      }
+      @media (min-width: 992px) {
+        body {
+          padding-top: 56px;
+        }
+      }
+
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="#">NewsBlind</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="index.html">Search
+
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="methods.html">Features</a>
+              <span class="sr-only">(current)</span>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="about.html">About Us</a>
+            </li>
+            <li class ="nav-item">
+              <a class="nav-link" href="https://github.com/anushadatar/goons_getem_gotem_good">GitHub</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+      <div class="row">
+
+        <div id="entry_main" class="col-lg-12 text-center">
+          <br> <br>
+
+          <h1>Features</h1>
+          <p>The aim of this project was to holistically analyze a given news article in order to determine a prediction for its authenticity. We focused explicitly on informing the user rather than censoring them. In order to determine a prediction for the authenticity of an article, we had to look at several different metrics, and used a variety of different data processing techniques. Based on research and testing, we applied selective weights to each of the metrics that we searched for. We then combined the combined weighted sum of the additional metrics with the initial result calculated by the linear support vector classification algorithm in order to produce a final prediction with an associated confidence percentage.</p>
+
+          <div class="grow" >
+            <h4>Web Crawler</h4>
+            <p>We firstly made a custom web crawler and html scraper in order to selectively collect thousands of articles from various websites as training data for our machine learning algorithm. The crawler looked at websites of known credibilty and the links that they featured. It selected relevant news articles and stored the title and text content of the article. In order to expedite the process of obtaining training data, the html scraper operates in a pseudo-recursive manner: it constantly looks for relative links on every article it finds, all while cataloging past articles as to prevent duplicates in the training data</p>
+          </div>
+          <div class="grow" >
+            <h4>Machine Learning Algorithm for Classification</h3>
+            <p>The training data was then fed into a using linear support vector classification machine learning algorithm. This allowed us to generate a rough "yes or no" answer to our authenticity question</p>
+          </div>
+          <!--
+          <p> The metrics we eveluated were as follows:</p>
+          -->
+          <div class="grow" >
+            <h4>Sentiment Analysis</h4>
+            <p>Sentiment is a metric that is actually a combination of two metrics: subjectivity and polarity. Subjectivity is a measure of how objective or subjective an article is. Polarity is a measure of what kind of emotional and supportive language was used in an article. In our system, we look for low subjectivity values, which are indicative of an objective article, and low polarity values, which are indicative of a more neutral, and therfore less biased, stance. In order to derive the subjectivity and polarity of the titles of our articles, we used sentiment analysis algorithms within a computational linguistics library</p>
+          </div>
+          <div class="grow" >
+            <h4>Grammar Analysis</h4>
+            <p>This process computes the relative quality of an article's grammar. Poor grammar in an article serves to lower its authenticity. We used a natural language processing library in order to measure the quality of grammar within our articles</p>
+          </div>
+          <div class="grow" >
+            <h4>Top Level Domain Analysis</h4>
+            <p>The Top Level Domain is a relatively simple metric that we tested for. We simply looked at the Top Level Domain (TLD) of the URL of the article submitted. Especially suspicious TLD's, such as '.country' were flagged for extra risk, and secure TLD's such as '.gov' were flagged for being particularly reliable</p>
+          </div>
+          <div class="grow" >
+            <h4>Domain Cross Checking</h4>
+            <p>Domain: Using a datasheet from OpenSources.co, which catalogs several hundred of the most common news sources known for their unreliable information. The datasheet was generated by many human volunteers using a unique seven step process for verification. If the incomming URL's domain is found on the datasheet, it is flagged for various levels of suspiciousness given the rating provided from the datasheet.</p>
+          </div>
+          <div class="grow" >
+            <h4>Clickbait Analysis</h4>
+            <p>Clickbait refers to an online headline that over exaggerates its content, or displays information out of context, in order to increase click rates. This kind of decietful headline is a great indicator for fake news. Using a Naive Baysian Classifier, we trained an algorithm to detect whether a headline is a clickbait or not.</p>
+          </div>
+
+          <p>In the future, we plan to integrate author metrics to the evaluation process. We made a script that extracted the author of an article and presented the user with a short bio from wikipedia if possible, to help the user decide on their own the validity of the source. Due to differences in python versions, we were unable to integrate this feature to the final product</p>
+
+
+
+
+    </div>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  </body>
+
+</html>
