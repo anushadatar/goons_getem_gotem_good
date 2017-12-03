@@ -33,7 +33,7 @@ from second_layer import SecondLayer
 
 sys.path.insert(0, '../components/')
 
- 
+
 app = Flask(__name__)
 
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -94,7 +94,7 @@ def classifyURL(url):
 
 	ds = pd.Series([text])
 
-	filename1 = "fake_or_real_news.csv"
+	filename1 = "../data/fake_or_real_news.csv"
 	data1 = pd.read_csv(filename1)
 
 	headlines_train = data1.title
@@ -126,7 +126,7 @@ def classifyURL(url):
 	second = SecondLayer(text, url,  pred[0])
 	data = second.json()
 	print(data)
-	return data	
+	return data
 
 
 

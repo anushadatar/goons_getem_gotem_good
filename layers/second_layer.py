@@ -248,4 +248,4 @@ def test():
     test = SecondLayer(input_text, url, rating)
     print(test.json())
 
-#test()
+test()
