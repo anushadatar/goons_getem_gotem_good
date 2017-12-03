@@ -42,10 +42,42 @@ app.config['CORS_RESOURCES'] = {r"/*": {"origins": "*"}}
 #cors = CORS(app, resources={r"/api/*": {"origins": "http://localhost:port"}},headers='Content-Type')
 cors = CORS(app)
 
-
+# Holds polling information for all URLs and sentiments ever. I'm so sorry.
+global polling_data
+polling_data = {}
 
 
 @cross_origin(origin='*',allow_headers="*",send_wildcard='true')
+
+
+
+@app.route('/update_polls_pos', methods=["POST"])
+def update_dict_pos():
+    global poll
+    query = request.data
+    print(query)
+    link_name =(str(query)[1:-1])
+    print("yes!")
+    if polling_data[link_name] is None:
+        polling_data[link_name] = [1, 0]
+    else:
+        polling_data[link_name][0] += 1
+    return_results()
+
+def return_results(url):
+    return polling_data[url]
+
+@app.route('/update_polls_neg', methods=["POST"])
+def update_dict_neg():
+    global poll
+    query = request.data
+    print(query)
+    link_name = (str(query)[1:-1])
+    if polling_data[link_name] is None:
+        polling_data[link_name] = [0, 1]
+    else:
+        polling_data[link_name][1] += 1
+    return_results
 
 @app.route('/check_selected', methods=['POST'])
 def check_selected():
@@ -95,6 +127,10 @@ def classifyURL(url):
 	data = second.json()
 	print(data)
 	return data	
+
+
+
+
 
 @app.after_request
 def after_request(response):
