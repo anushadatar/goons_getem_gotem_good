@@ -1,12 +1,14 @@
-$( "#yes" ).click(function() {
-    var searchstring = $("search").val();
-    xdr("http://127.0.0.0.1:5000/update_polls_pos", "POST", JSON.stringify(searchstring), getResults, errThrow)
+
+$(document).on( "click", "#yes", function() {
+  	var searchstring = $("search").val();
+  	console.log("yes");
+    xdr("http://127.0.0.1:5000/update_polls_pos", "POST", searchstring, getResults, errThrow)
 });
 
-
-$( "#no" ).click(function() {
-    var searchstring = $("search").val();
-    xdr("http://127.0.0.0.1:5000/update_polls_neg", "POST", JSON.stringify(searchstring), getResults, errThrow)
+$(document).on( "click", "#no", function() {
+  	var searchstring = $("search").val();
+  	console.log("no");
+    xdr("http://127.0.0.1:5000/update_polls_neg", "POST", searchstring, getResults, errThrow)
 });
 
 $(document).keypress(function(e) {
@@ -20,8 +22,10 @@ $(document).keypress(function(e) {
 });
 
 function getResults(x) {
-    $ ("#walnut").text("This went through! Here's the ugly array!" + x.toString())
-
+    $(".left").fadeOut();
+    console.log(x);
+    a = parseInt(str(x));
+    console.log(a);
 }
 
 
@@ -32,7 +36,7 @@ function getFStat(x) {
 	$("#loading_main").fadeOut(100);
 
 	$("#status_main").fadeIn(1000);
-
+	console.log(xx.grammar_metric);
 
 
 	$( "#bar" ).animate({
@@ -56,57 +60,57 @@ function getFStat(x) {
 	}
 
   if (xx.sentiment_metric < 0){
-    $("#metric").attr("class","reliable1");
-    $("#metricPercent").text(Math.round(Math.abs(xx.sentiment_metric) * 10).toString() + "%");
-    $("metricText").text("This source is relatively unbiased in stance and neutral in tone");
+    $("#metric0").attr("class","reliable1");
+    $("#metricPercent0").text(Math.round(Math.abs(xx.sentiment_metric) * 10).toString() + "%");
+    $("metricText0").text("This source is relatively unbiased in stance and neutral in tone");
   } else {
-    $("#metric").attr("class","fake1");
-    $("#metricPercent").text(Math.round(Math.abs(xx.sentiment_metric) * 10).toString() + "%");
-    $("metricText").text("This source is relatively biased in stance and emotional in tone");
+    $("#metric0").attr("class","fake1");
+    $("#metricPercent0").text(Math.round(Math.abs(xx.sentiment_metric) * 10).toString() + "%");
+    $("metricText0").text("This source is relatively biased in stance and emotional in tone");
   }
 
   if (xx.title_metric > 0){
-    $("#metric").attr("class","fake1");
-    $("#metricPercent").text("Clickbait");
-    $("#metricText").text("This article is likely clickbait");
+    $("#metric1").attr("class","fake1");
+    $("#metricPercent1").text("Clickbait");
+    $("#metricText1").text("This article is likely clickbait");
   } else {
-    $("#metric").attr("class","reliable1");
-    $("#metricPercent").text("Not Clickbait");
-    $("#metricText").text("This article is probably not clickbait");
+    $("#metric1").attr("class","reliable1");
+    $("#metricPercent1").text("Not Clickbait");
+    $("#metricText1").text("This article is probably not clickbait");
   }
 
   if (xx.grammar_metric < 0){
-    $("#metric").attr("class","reliable1");
-    $("#metricPercent").text(Math.round(Math.abs(xx.grammar_metric) * 10).toString() + "%");
-    $("#metricText").text("The grammar structure of this article is relatively strong");
+    $("#metric2").attr("class","reliable1");
+    $("#metricPercent2").text("Normal");
+    $("#metricText2").text("The grammar structure of this article is relatively strong");
   } else {
-    $("#metric").attr("class","fake1");
-    $("#metricPercent").text(Math.round(Math.abs(xx.grammar_metric) * 10).toString() + "%");
-    $("#metricText").text("The grammar structure of this article is relatively poor");
+    $("#metric2").attr("class","fake1");
+    $("#metricPercent2").text("Poor");
+    $("#metricText2").text("The grammar structure of this article is relatively poor");
   }
 
-  if (xx.domain_score < 0){
-    $("#metric").attr("class","reliable1");
-    $("#metricPercent").text(Math.round(Math.abs(xx.domain_score) * 6.6666).toString() + "%");
-    $("#metricText").text("The article's domain isn't widely known to be inauthentic");
+  if (xx.domain_score < 1){
+    $("#metric3").attr("class","questionable1");
+    $("#metricPercent3").text("Unknown");
+    $("#metricText3").text("The article's domain isn't widely known to be inauthentic");
   } else {
-    $("#metric").attr("class","fake1");
-    $("#metricPercent").text(Math.round(Math.abs(xx.domain_score) * 6.6666).toString() + "%");
-    $("#metricText").text("The article's domain is known to be inauthentic");
+    $("#metric3").attr("class","fake1");
+    $("#metricPercent3").text(Math.round(Math.abs(xx.domain_score) * 6.6666).toString() + "%");
+    $("#metricText3").text("The article's domain is known to be inauthentic");
   }
 
   if (xx.TLD_score < 0){
-    $("#metric").attr("class","reliable1");
-    $("#metricPercent").text("Standard TLD");
-    $("#metricText").text("The article's Top Level Domain is a standard one and likely very safe");
+    $("#metric4").attr("class","reliable1");
+    $("#metricPercent4").text("Standard TLD");
+    $("#metricText4").text("The article's Top Level Domain is a standard one and likely very safe");
   } else if (xx.TLD_score < 10){
-    $("#metric").attr("class","questionable1");
-    $("#metricPercent").text("Non-Standard TLD");
-    $("#metricText").text("The article's Top Level Domain is a non-standard one");
+    $("#metric4").attr("class","questionable1");
+    $("#metricPercent4").text("Non-Standard TLD");
+    $("#metricText4").text("The article's Top Level Domain is a non-standard one");
   } else {
-    $("#metric").attr("class","fake1");
-    $("#metricPercent").text("Dangerous TLD");
-    $("#metricText").text("The article's Top Level Domain is known to be qutie dangerous");
+    $("#metric4").attr("class","fake1");
+    $("#metricPercent4").text("Dangerous TLD");
+    $("#metricText4").text("The article's Top Level Domain is known to be qutie dangerous");
   }
 
 

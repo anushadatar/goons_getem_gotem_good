@@ -13,7 +13,7 @@ from sumy.utils import get_stop_words
 
 from textblob import TextBlob
 from textblob.classifiers import NaiveBayesClassifier
-#import grammar_check
+import grammar_check
 
 #from newspaper import Article
 #import newspaper
@@ -26,6 +26,7 @@ import numpy
 import urllib
 import wikipedia
 import json
+import pandas as pd
 from flask import jsonify
 
 
@@ -60,10 +61,8 @@ class SecondLayer():
         self.polarity = self.text.sentiment[0]
         self.subjectivity = self.text.sentiment[1]
         self.sentiment_metric = self.compute_sentiment_metric()
-        #self.grammar_metric = self.compute_grammar_metric()
-        #self.title_metric = self.compute_clickbait_metric()
-        self.grammar_metric = 0
-        self.title_metric = 0
+        self.grammar_metric = self.compute_grammar_metric()
+        self.title_metric = self.compute_clickbait_metric()
         #self.author_info = self.find_author()
         self.author_info = 0
         self.websites, self.category = self.parse_suspicious_websites()
@@ -87,7 +86,7 @@ class SecondLayer():
         matches = tool.check(self.raw_text)
         approximate_number_of_words = self.raw_text.count(" ") + 1
         metric =((approximate_number_of_words- len(matches))/float(approximate_number_of_words))
-        return (((2 * metric) - 1) * 10)
+        return (((2 * metric) - 1) * 5)
 
     def compute_clickbait_metric(self):
         """
@@ -114,7 +113,7 @@ class SecondLayer():
         cl = NaiveBayesClassifier(train)
         blob = TextBlob(self.head, classifier = cl)
         if blob.classify() == "pos":
-            return 15
+            return 5
         else:
             return 0
 
@@ -148,31 +147,34 @@ class SecondLayer():
                 return message
     '''
     def parse_suspicious_websites(self):
-        websites = []
+
         category = []
-        with open('sources.csv', 'r') as csvfile:
-            self.reader = csv.reader(csvfile, delimiter=',')
-            for row in self.reader:
-                websites.append(row[0])
-                if row[1] == "bias":
-                    category.append(5)
-                elif row[1] == "clickbait":
-                    category.append(10)
-                elif row[1] == "conspiracy":
-                    category.append(10)
-                elif row[1] == "unreliable":
-                    category.append(10)
-                elif row[1] == "fake":
-                    category.append(15)
-                elif row[1] == "political":
-                    category.append(15)
-                elif row[1] == "rumor":
-                    category.append(10)
-                elif row[1] == "junksci":
-                    category.append(5)
-                elif row[1] == "hate":
-                    category.append(10)
-            return websites, category
+        csv_series = pd.read_csv('sources.csv')
+        websites = csv_series.websites
+        categories = csv_series.type
+
+
+        for categori in categories:
+            if categori == "bias":
+                category.append(5)
+            elif categori == "clickbait":
+                category.append(10)
+            elif categori == "conspiracy":
+                category.append(10)
+            elif categori == "unreliable":
+                category.append(10)
+            elif categori == "fake":
+                category.append(15)
+            elif categori == "political":
+                category.append(5)
+            elif categori == "rumor":
+                category.append(10)
+            elif categori == "junksci":
+                category.append(5)
+            elif categori == "hate":
+                category.append(10)
+
+        return websites,category
 
     def check_TLD(self):
         self.url_split_1 = self.url.split('/')
@@ -247,5 +249,3 @@ def test():
     print("Running")
     test = SecondLayer(input_text, url, rating)
     print(test.json())
-
-#test()
