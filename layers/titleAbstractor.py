@@ -8,33 +8,28 @@ from sumy.summarizers.lsa import LsaSummarizer as Summarizer
 from sumy.nlp.stemmers import Stemmer
 from sumy.utils import get_stop_words
 
+import os
 from google import google
 
 
 
 
-def crossCheck():
-    url = "https://www.cbsnews.com/news/walmart-pulls-rope-tree-journalist-t-shirt-from-site/"
-    # or for plain text files
-    # parser = PlaintextParser.from_file("document.txt", Tokenizer(LANGUAGE))
+def crossCheck(self, string)
+url = "https://www.cbsnews.com/news/walmart-pulls-rope-tree-journalist-t-shirt-from-site/"
+# or for plain text files
+# parser = PlaintextParser.from_file("document.txt", Tokenizer(LANGUAGE))
+stemmer = Stemmer("english")
 
-    fileName = "Article.txt"
-    file = open(fileName, "w")
-
-
-    stemmer = Stemmer("english")
-
-    summarizer = Summarizer(stemmer)
-    summarizer.stop_words = get_stop_words("english")
+summarizer = Summarizer(stemmer)
+summarizer.stop_words = get_stop_words("english")
 
 
-    parser = PlaintextParser.from_file(file, Tokenizer("english"))
+parser = PlaintextParser.from_file(file, Tokenizer("english"))
 
-    for sentence in summarizer(parser.document, 1):
-        print(sentence)
-        sentence = str(sentence)
+for sentence in summarizer(parser.document, 1):
+    print(sentence)
+    sentence = str(sentence)
 
-    search_results = google.search(sentence, 1)
-    print(search_results)
+num_page = 1
 
-crossCheck()
+search_results = google.search(sentence, num_page)
