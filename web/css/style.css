@@ -3,13 +3,80 @@ body{
   background: #343d46;
   font-family: 'Barlow Semi Condensed', sans-serif;
   color: white;
+}
+
+.grow {
+  padding: 5px 5px 5px 5px;
+  border-radius: 10px;
+  height: 45px;
+  width: 100%;
+  margin: 10px 1% 10px 1%;
+
+  position: relative;
+  transition: height 0.5s;
+  -webkit-transition: height 0.5s;
+  text-align: center;
+  overflow: hidden;
+  background-color: #2a75a9;
+  transition: all 0.35s ease;
+}
+.grow:hover {
+  height: 225px;
+  background-color: #212d59;
 
 }
- 
-.box{
-  margin: 50px auto;
-  height: 120px;
+
+#wrapper .text{
+  width: 100%
+  visibility:hidden;
+  -webkit-opacity: 0;
+  -moz-opacity: 0;
+  opacity: 0;
 }
+#wrapper .title{
+
+    visibility: visible;
+    -webkit-opacity: 1;
+    -moz-opacity: 1;
+    opacity: 1;
+    -webkit-transition: all 0.35s ease;
+    -moz-transition: all 0.35s ease;
+    -ms-transition: all 0.35s ease;
+    -o-transition: all 0.35s ease;
+    transition: all 0.35s ease;
+    padding-top: 0.5em
+  }
+  #box:hover .text{
+    visibility: visible;
+    -webkit-opacity: 1;
+    -moz-opacity: 1;
+    opacity: 1;
+    -webkit-transition: all 0.35s ease;
+    -moz-transition: all 0.35s ease;
+    -ms-transition: all 0.35s ease;
+    -o-transition: all 0.35s ease;
+    transition: all 0.35s ease;
+  }
+
+#box:hover .title{
+  visibility: hidden;
+  -webkit-opacity: 0;
+  -moz-opacity: 0;
+  opacity: 0;
+}
+
+#box .visible {
+visibility:visible;
+
+}
+  #box{
+    position: relative;
+    width: auto;
+    background-color: red;
+    bottom: 30px;
+    left: 0px
+  }
+
 
 [type="search"] {
     outline-offset: -2px;
@@ -45,7 +112,7 @@ body{
   outline: 1px solid transparent;
 }
 
- 
+
  #largeBox {
     height: 3em;
     width: 3em;
@@ -81,6 +148,7 @@ body{
   0% {transform: rotate(0deg);}
   100% {transform: rotate(90deg);}
 }
+
 
 #status_main{
 
