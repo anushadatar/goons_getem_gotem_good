@@ -51,17 +51,18 @@ class SecondLayer():
     A news article. Should ideally have raw text input.
     """
     def __init__(self, input_text, url, rating):
+        self.input_text = input_text
         self.rating = rating
         self.url = url
-        self.raw_text = input_text.encode('utf-8', 'ignore').decode('utf-8')
+        self.raw_text = input_text.decode('utf-8')
         self.head = input_text[0:self.raw_text.find("\n")]
         self.headline = self.head.encode('utf-8', 'ignore').decode('utf-8')
         self.text = TextBlob(self.raw_text)
         self.polarity = self.text.sentiment[0]
         self.subjectivity = self.text.sentiment[1]
         self.sentiment_metric = self.compute_sentiment_metric()
-        #self.grammar_metric = self.compute_grammar_metric()
-        #self.title_metric = self.compute_clickbait_metric()
+        self.grammar_metric = self.compute_grammar_metric()
+        self.title_metric = self.compute_clickbait_metric()
         self.grammar_metric = 0
         self.title_metric = 0
         #self.author_info = self.find_author()
@@ -71,6 +72,32 @@ class SecondLayer():
         self.domain_score = self.check_domain()
         #self.author_score = self. check_author()
         self.total_score = self.compute_total_score()
+        #self.crossCheck = self.crossCheck()
+
+    """def crossCheck(self):
+
+        fileName = "Article.txt"
+        file = open(fileName, "w")
+        file.write(self.input_text)
+        file.close()
+
+        stemmer = Stemmer("english")
+
+        summarizer = Summarizer(stemmer)
+        summarizer.stop_words = get_stop_words("english")
+
+
+        parser = PlaintextParser.from_file("Article.txt", Tokenizer("english"))
+
+        for sentence in summarizer(parser.document, 1):
+            print(sentence)
+            sentence = str(sentence)
+
+        sentence = sentence.decode('utf-8')
+        file = open(fileName, "w").close()
+
+        search_results = google.search(sentence, 1)
+        print(search_results)"""
 
     def compute_sentiment_metric(self):
         """
@@ -78,7 +105,7 @@ class SecondLayer():
         the overall polairty (positive/negative bias) or
         """
         return (((2 * abs(self.polarity) - 1) + (2 * self.subjectivity) - 1) / 2) * 10
-    
+
     def compute_grammar_metric(self):
         """
         Computes grammar metric for text set.
@@ -192,7 +219,7 @@ class SecondLayer():
                 return 0
             return 4
     """
-    
+
     def compute_total_score(self):
         final_score = 0
         if self.rating == "REAL":
@@ -207,7 +234,7 @@ class SecondLayer():
         return ((final_score * 2) - 100) / 100
 
     def json(self):
-        
+
         results = {'final_score': self.total_score,
                 'sentiment_metric': self.sentiment_metric,
                 'title_metric': self.title_metric,
@@ -233,4 +260,4 @@ def test():
     test = SecondLayer(input_text, url, rating)
     print(test.json())
 
-#test()
+test()
