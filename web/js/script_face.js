@@ -1,11 +1,11 @@
 $( "#yes" ).click(function() {
-    var searchstring = $("search").val();  
+    var searchstring = $("search").val();
     xdr("http://127.0.0.0.1:5000/update_polls_pos", "POST", JSON.stringify(searchstring), getResults, errThrow)
 });
 
 
 $( "#no" ).click(function() {
-    var searchstring = $("search").val();  
+    var searchstring = $("search").val();
     xdr("http://127.0.0.0.1:5000/update_polls_neg", "POST", JSON.stringify(searchstring), getResults, errThrow)
 });
 
@@ -23,14 +23,14 @@ function getResults(x) {
     $ ("#walnut").text("This went through! Here's the ugly array!" + x.toString())
 
 }
-    
+
 
 function getFStat(x) {
 
 	xx = JSON.parse(JSON.parse(x));
 
 	$("#loading_main").fadeOut(100);
-	
+
 	$("#status_main").fadeIn(1000);
 
 
@@ -54,14 +54,69 @@ function getFStat(x) {
 	} else {
 		$("#status").attr("class","unknown");
 	}
-	
+
+  if (xx.sentiment_metric < 0){
+    $("#metric").attr("class","reliable1");
+    $("#metricPercent").text(Math.round(Math.abs(xx.sentiment_metric) * 10).toString() + "%");
+    $("metricText").text("This source is relatively unbiased in stance and neutral in tone");
+  } else {
+    $("#metric").attr("class","fake1");
+    $("#metricPercent").text(Math.round(Math.abs(xx.sentiment_metric) * 10).toString() + "%");
+    $("metricText").text("This source is relatively biased in stance and emotional in tone");
+  }
+
+  if (xx.title_metric > 0){
+    $("#metric").attr("class","fake1");
+    $("#metricPercent").text("Clickbait");
+    $("#metricText").text("This article is likely clickbait");
+  } else {
+    $("#metric").attr("class","reliable1");
+    $("#metricPercent").text("Not Clickbait");
+    $("#metricText").text("This article is probably not clickbait");
+  }
+
+  if (xx.grammar_metric < 0){
+    $("#metric").attr("class","reliable1");
+    $("#metricPercent").text(Math.round(Math.abs(xx.grammar_metric) * 10).toString() + "%");
+    $("#metricText").text("The grammar structure of this article is relatively strong");
+  } else {
+    $("#metric").attr("class","fake1");
+    $("#metricPercent").text(Math.round(Math.abs(xx.grammar_metric) * 10).toString() + "%");
+    $("#metricText").text("The grammar structure of this article is relatively poor");
+  }
+
+  if (xx.domain_score < 0){
+    $("#metric").attr("class","reliable1");
+    $("#metricPercent").text(Math.round(Math.abs(xx.domain_score) * 6.6666).toString() + "%");
+    $("#metricText").text("The article's domain isn't widely known to be inauthentic");
+  } else {
+    $("#metric").attr("class","fake1");
+    $("#metricPercent").text(Math.round(Math.abs(xx.domain_score) * 6.6666).toString() + "%");
+    $("#metricText").text("The article's domain is known to be inauthentic");
+  }
+
+  if (xx.TLD_score < 0){
+    $("#metric").attr("class","reliable1");
+    $("#metricPercent").text("Standard TLD");
+    $("#metricText").text("The article's Top Level Domain is a standard one and likely very safe");
+  } else if (xx.TLD_score < 10){
+    $("#metric").attr("class","questionable1");
+    $("#metricPercent").text("Non-Standard TLD");
+    $("#metricText").text("The article's Top Level Domain is a non-standard one");
+  } else {
+    $("#metric").attr("class","fake1");
+    $("#metricPercent").text("Dangerous TLD");
+    $("#metricText").text("The article's Top Level Domain is known to be qutie dangerous");
+  }
+
+
 	$("#subbar").text(((Math.round(10*Math.abs(xx.final_score*100)))/10).toString()+'%');
 	if(xx.final_score <= 0) {
 		$("#walnut").text("We are " + ((Math.round(10*Math.abs(xx.final_score*100)))/10).toString()+'%' + " confident the provided site is a credible source.");
 	} else {
 		$("#walnut").text("We are " + ((Math.round(10*Math.abs(xx.final_score*100)))/10).toString()+'%' + " confident the provided site is an untrustworthy source.");
 	}
-	
+
 }
 
 function errThrow(x) {
@@ -91,7 +146,7 @@ function postPython(st) {
 
 function xdr(url, method, data, callback, errback) {
     var req;
-    
+
     if(XMLHttpRequest) {
         req = new XMLHttpRequest();
 

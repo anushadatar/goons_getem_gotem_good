@@ -26,6 +26,9 @@ body{
 
 }
 
+
+
+
 #wrapper .text{
   width: 100%
   visibility:hidden;
@@ -232,4 +235,57 @@ visibility:visible;
     margin-top: 60px;
     margin-left: -84px;
 	margin-bottom: 3%;
+}
+
+
+#metric {
+  padding: 5px 5px 5px 5px;
+  border-radius: 10px;
+  height: 150px;
+  width: 150px;
+  margin: 10px 1% 10px 1%;
+
+  display: inline-block;
+  transition: all 0.35s ease;
+  text-align: center;
+  overflow: hidden;
+  background-color: #2a75a9;
+  opacity: 0.3
+  transition: all 0.35s ease;
+}
+.reliable1 {
+  color: #99b433;
+}
+.questionable1 {
+  color: #ffc40d;
+}
+
+.fake1 {
+  color: #e51400;
+}
+.unknown1 {
+  color:#eff4ff;
+}
+
+#metric:hover {
+  background-color: #212d59;
+}
+
+#metric .reliable1 {
+  color: #99b433;
+  font-size:50px;
+}
+
+#metric .questionable1 {
+  color: #ffc40d;
+  font-size:50px;
+}
+
+#metric .fake1 {
+  color: #e51400;
+  font-size:50px;
+}
+
+#metric .unkown1 {
+  font-size:50px;
 }
