@@ -25,7 +25,7 @@ from bs4 import BeautifulSoup as Soup
 from textblob import TextBlob
 from goose import Goose
 from requests import *
-from flask import Flask,request
+from flask import Flask,request,jsonify
 from flask_cors import CORS, cross_origin
 from flask.ext.cors import CORS
 
@@ -52,31 +52,31 @@ polling_data = {}
 
 
 @app.route('/update_polls_pos', methods=["POST"])
-def update_dict_pos():
+def update_polls_pos():
     global poll
     query = request.data
     print(query)
-    link_name = str(query)
+    link_name = query
     if link_name in polling_data:
     	polling_data[link_name][0] += 1
     else:
         polling_data[link_name] = [1, 0]
-    return jsonify(polling_data)
+    return (polling_data)
 
 def return_results(url):
     return str(polling_data[url])
 
 @app.route('/update_polls_neg', methods=["POST"])
-def update_dict_neg():
+def update_polls_neg():
     global poll
     query = request.data
     print(query)
-    link_name = str(query)
+    link_name = query
     if link_name in polling_data:
     	polling_data[link_name][1] += 1
     else:
         polling_data[link_name] = [0, 1]
-    return jsonify(polling_data)
+    return (polling_data)
 
 
 @app.route('/check_selected', methods=['POST'])

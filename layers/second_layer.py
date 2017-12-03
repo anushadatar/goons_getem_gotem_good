@@ -172,6 +172,8 @@ class SecondLayer():
                     category.append(5)
                 elif row[1] == "hate":
                     category.append(10)
+                else:
+                    category.append(0)
             return websites, category
 
     def check_TLD(self):
