@@ -79,7 +79,7 @@ function getFStat(x) {
     $("#metricText1").text("This article is probably not clickbait");
   }
 
-  if (xx.grammar_metric == 0){
+  if (xx.grammar_metric < 0){
     $("#metric2").attr("class","reliable1");
     $("#metricPercent2").text("Normal");
     $("#metricText2").text("The grammar structure of this article is relatively strong");
@@ -89,9 +89,9 @@ function getFStat(x) {
     $("#metricText2").text("The grammar structure of this article is relatively poor");
   }
 
-  if (xx.domain_score < 0){
-    $("#metric3").attr("class","reliable1");
-    $("#metricPercent3").text(Math.round(Math.abs(xx.domain_score) * 6.6666).toString() + "%");
+  if (xx.domain_score < 1){
+    $("#metric3").attr("class","questionable1");
+    $("#metricPercent3").text("Unknown");
     $("#metricText3").text("The article's domain isn't widely known to be inauthentic");
   } else {
     $("#metric3").attr("class","fake1");

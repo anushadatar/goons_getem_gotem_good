@@ -15,8 +15,8 @@ By considering all of these areas of information we can determine which category
 
 Disclaimer The information contained in this site is for informational and educational purposes only. We have made every attempt to ensure that the information contained in this site and in our downloadable data is reliable; however, we are not responsible for any errors, or for the results obtained from the use of this information. All information in this site is provided “as is” and “as available,” with no guarantee of accuracy, reliability, completeness, or of the services or results obtained from the use of this information. By using OpenSources, you expressly agree that the use of OpenSources and its data is at your sole risk.
 '''
-from newspaper import Article
-import newspaper
+#from newspaper import Article
+#import newspaper
 import requests
 import dateutil
 from bs4 import BeautifulSoup
@@ -24,7 +24,8 @@ import requests
 import csv
 import numpy
 import urllib
-import wikipedia
+import pandas as pd
+#import wikipedia
 site_url = "http://www.breitbart.com/big-government/2017/12/01/michael-flynn-report-trump-white-house-caught-off-guard-flynn-plea-counsel-didnt-know/"
 
 trusted_domain = 2
@@ -39,7 +40,7 @@ safe_TLD = [".com", ".org", ".edu", ".co", ".gov"]
 suspicious_websites = []
 websites = []
 category = []
-
+'''
 def find_author(author):
     message = "No substantial information about " + author + " found"
     author_names = author.split(" ")
@@ -55,18 +56,20 @@ def find_author(author):
             if (content.find(author_names[0]) != -1) and (content.find(author_names[-1]) != -1):
                 return wikipedia.page(result).summary
             return message
+'''
 
 
 
-
-with open('sources.csv', 'r', newline='') as csvfile:
+with open('../layers/sources.csv', 'r', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     for row in reader:
         websites.append(row[0])
         if row[1] == "bias":
+            print("bias")
             category.append(2)
         elif row[1] == "clickbait":
             category.append(1)
+            print("clickbait")
         elif row[1] == "conspiracy":
             category.append(3)
         elif row[1] == "unreliable":
@@ -81,7 +84,11 @@ with open('sources.csv', 'r', newline='') as csvfile:
             category.append(3)
         elif row[1] == "hate":
             category.append(4)
+
 suspicious_websites = [websites, category]
+
+csv_series = pd.read_csv(skipinitialspace = True, )
+print(csv_series)
 
 url_split_1 = site_url.split('/')
 
@@ -105,7 +112,7 @@ for i in range(len(websites)):
         suspicious_site = True
         suspicious_site = category[i]
         break
-
+"""
 total_score = trusted_domain + suspicious_site
 print(total_score)
 a = Article(site_url)
@@ -116,3 +123,4 @@ a.parse()
 authors = a.authors
 for author in authors:
     print(find_author(author))
+"""
