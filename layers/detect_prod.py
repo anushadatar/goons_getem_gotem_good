@@ -29,6 +29,8 @@ from flask import Flask,request
 from flask_cors import CORS, cross_origin
 from flask.ext.cors import CORS
 
+from second_layer import SecondLayer
+
 sys.path.insert(0, '../components/')
 
  
@@ -39,6 +41,9 @@ app.config['CORS_RESOURCES'] = {r"/*": {"origins": "*"}}
 
 #cors = CORS(app, resources={r"/api/*": {"origins": "http://localhost:port"}},headers='Content-Type')
 cors = CORS(app)
+
+
+
 
 @cross_origin(origin='*',allow_headers="*",send_wildcard='true')
 
@@ -86,7 +91,10 @@ def classifyURL(url):
 	clf = LinearSVC(penalty="l1", dual=False, tol=1e-3)
 	clf.fit(X_train, Y_train)
 	pred = clf.predict(X_test)
-	return (pred[0])
+	second = SecondLayer(text, url,  pred[0])
+	data = second.json()
+	print(data)
+	return data	
 
 @app.after_request
 def after_request(response):
