@@ -114,7 +114,6 @@ class SecondLayer():
         cl = NaiveBayesClassifier(train)
         blob = TextBlob(self.head, classifier = cl)
         if blob.classify() == "pos":
-        if classify(self.headline) == "pos":
             return 15
         else:
             return 0
