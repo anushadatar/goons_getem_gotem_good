@@ -13,7 +13,7 @@ from sumy.utils import get_stop_words
 
 from textblob import TextBlob
 from textblob.classifiers import NaiveBayesClassifier
-#import grammar_check
+import grammar_check
 
 #from newspaper import Article
 #import newspaper
