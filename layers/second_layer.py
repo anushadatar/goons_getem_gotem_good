@@ -26,7 +26,7 @@ import numpy
 import urllib
 import wikipedia
 import json
-
+from flask import jsonify
 
 
 
@@ -53,9 +53,9 @@ class SecondLayer():
     def __init__(self, input_text, url, rating):
         self.rating = rating
         self.url = url
-        self.raw_text = input_text.decode('utf-8')
+        self.raw_text = input_text.encode('utf-8', 'ignore').decode('utf-8')
         self.head = input_text[0:self.raw_text.find("\n")]
-        self.headline = self.head.decode('utf-8')
+        self.headline = self.head.encode('utf-8', 'ignore').decode('utf-8')
         self.text = TextBlob(self.raw_text)
         self.polarity = self.text.sentiment[0]
         self.subjectivity = self.text.sentiment[1]
@@ -207,16 +207,18 @@ class SecondLayer():
         return ((final_score * 2) - 100) / 100
 
     def json(self):
+        
         results = {'final_score': self.total_score,
-            'sentiment_metric': self.sentiment_metric,
-            'title_metric': self.title_metric,
-            'grammar_metric': self.grammar_metric,
-            'domain_score': self.domain_score,
-            'TLD_score': self.TLD_score,
-            'initial_rating': self.rating}
+                'sentiment_metric': self.sentiment_metric,
+                'title_metric': self.title_metric,
+                'grammar_metric': self.grammar_metric,
+                'domain_score': self.domain_score,
+                'TLD_score': self.TLD_score,
+                'initial_rating': self.rating}
+
 
         result = json.dumps(results)
-        loaded_results = json.loads(result)
+        loaded_results = jsonify(result)
         # loaded_results['results'] #Output 3.5
         # type(results) #Output str
         #  type(loaded_results) #Output dict
@@ -231,4 +233,4 @@ def test():
     test = SecondLayer(input_text, url, rating)
     print(test.json())
 
-test()
+#test()

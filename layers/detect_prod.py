@@ -29,6 +29,8 @@ from flask import Flask,request
 from flask_cors import CORS, cross_origin
 from flask.ext.cors import CORS
 
+from second_layer import SecondLayer
+
 sys.path.insert(0, '../components/')
 
  
@@ -39,6 +41,9 @@ app.config['CORS_RESOURCES'] = {r"/*": {"origins": "*"}}
 
 #cors = CORS(app, resources={r"/api/*": {"origins": "http://localhost:port"}},headers='Content-Type')
 cors = CORS(app)
+
+global clf
+
 
 @cross_origin(origin='*',allow_headers="*",send_wildcard='true')
 
@@ -69,24 +74,27 @@ def classifyURL(url):
 	k_store = 500
 
 	feature_names = None
+	if(clf is None):
+		vectorizer = HashingVectorizer(stop_words='english', strip_accents='unicode', alternate_sign=False, n_features=500)
+		ch2 = SelectKBest(chi2, k=k_store)
+		X_train = vectorizer.fit_transform(articles_train)
+		X_test = vectorizer.transform(articles_test)
+		Y_train = states_train
+		X_train = ch2.fit_transform(X_train, Y_train)
 
-	vectorizer = HashingVectorizer(stop_words='english', strip_accents='unicode', alternate_sign=False, n_features=500)
-	ch2 = SelectKBest(chi2, k=k_store)
-	X_train = vectorizer.fit_transform(articles_train)
-	X_test = vectorizer.transform(articles_test)
-	Y_train = states_train
-	X_train = ch2.fit_transform(X_train, Y_train)
+		if feature_names:
+			feature_names = [feature_names[i] for i in ch2.get_support(indices=True)]
 
-	if feature_names:
-		feature_names = [feature_names[i] for i in ch2.get_support(indices=True)]
+		if feature_names:
+		    feature_names = np.asarray(feature_names)
 
-	if feature_names:
-	    feature_names = np.asarray(feature_names)
-
-	clf = LinearSVC(penalty="l1", dual=False, tol=1e-3)
-	clf.fit(X_train, Y_train)
+		clf = LinearSVC(penalty="l1", dual=False, tol=1e-3)
+		clf.fit(X_train, Y_train)
 	pred = clf.predict(X_test)
-	return (pred[0])
+	second = SecondLayer(text, url,  pred[0])
+	data = second.json()
+	print(data)
+	return data	
 
 @app.after_request
 def after_request(response):
