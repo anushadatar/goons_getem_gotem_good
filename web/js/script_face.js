@@ -1,32 +1,13 @@
-
-var config = {
-    apiKey: "AIzaSyCLMTgHQbT0qkFjNnF6VyFEC8r7xZgjNms",
-    authDomain: "newsblind-1.firebaseapp.com",
-    databaseURL: "https://newsblind-1.firebaseio.com",
-  };
-
-firebase.initializeApp(config);
-var ref = firebase.database();
-
-var urlDest = "";
-
-function finalURL(x) {
-	n = x.rfind('/');
-}
-
 $( "#yes" ).click(function() {
-
+    var searchstring = $("search").val();
+    xdr("http://127.0.0.0.1:5000/update_polls_pos", "POST", JSON.stringify(searchstring), getResults, errThrow)
 });
 
 
 $( "#no" ).click(function() {
-
+    var searchstring = $("search").val();
+    xdr("http://127.0.0.0.1:5000/update_polls_neg", "POST", JSON.stringify(searchstring), getResults, errThrow)
 });
-
-function addToFirebase(url, condition) {
-	url_ending = finalURL(url);
-
-}
 
 $(document).keypress(function(e) {
     if(e.which == 13) {
@@ -37,6 +18,11 @@ $(document).keypress(function(e) {
         xdr("http://127.0.0.1:5000/check_selected","POST",JSON.stringify(searchstring),getFStat,errThrow)
     }
 });
+
+function getResults(x) {
+    $ ("#walnut").text("This went through! Here's the ugly array!" + x.toString())
+
+}
 
 
 function getFStat(x) {
