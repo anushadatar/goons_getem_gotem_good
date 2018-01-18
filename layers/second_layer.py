@@ -29,24 +29,6 @@ import json
 import pandas as pd
 from flask import jsonify
 
-
-
-
-# TODO List
-# Fix clickbait analyzer
-# Give that a lot more training data`
-# Impletment pandas series to plain text conversion
-# Worry about python 2 and 3 library conflicts
-# Think about how to hand data over the UI
-# Build the entire UI and also the web framework (oh yeah, that)
-# Implement alternate article lookup
-
-# TODO Figure out how this compiles into JS for the extensions
-# TODO Figure out how to best hand this over to the UI
-# TODO Add
-# TODO Add text summarization feature
-    # Then, add suggestions feature
-
 class SecondLayer():
     """
     A news article. Should ideally have raw text input.
