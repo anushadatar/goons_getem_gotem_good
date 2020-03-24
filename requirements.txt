@@ -103,7 +103,7 @@ python-dateutil==2.6.1
 python-qt-binding==0.3.2
 python-snappy==0.5
 pytz==2017.3
-PyYAML==3.11
+PyYAML==5.1
 qt-dotgraph==0.3.4
 qt-gui==0.3.4
 qt-gui-cpp==0.3.4
