@@ -20,7 +20,7 @@ configobj==5.0.6
 controller-manager==0.12.0
 controller-manager-msgs==0.12.0
 controller-manager-tests==0.12.0
-cryptography==1.2.3
+cryptography==3.2
 cssselect==1.0.1
 cv-bridge==1.12.4
 cycler==0.9.0
