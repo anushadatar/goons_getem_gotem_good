@@ -59,7 +59,7 @@ interactive-markers==1.11.3
 ipaddress==1.0.16
 itsdangerous==0.24
 jieba==0.39
-Jinja2==2.10
+Jinja2==2.11.3
 keyring==7.3
 laser-geometry==1.6.4
 launchpadlib==1.10.3
