@@ -36,7 +36,7 @@ empy==3.3.2
 enum34==1.1.2
 ez-setup==0.9
 Flask==0.12.2
-Flask-Cors==3.0.3
+Flask-Cors==3.0.9
 futures==3.0.5
 gazebo-plugins==2.5.13
 gazebo-ros==2.5.13
